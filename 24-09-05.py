@@ -111,3 +111,12 @@ wish("c++","goodmorning")
 wish("c++",msg="goodmorning")
 
 wish(name="go","good afternoon")
+## variable length argument
+def sum(*n):
+    total=0
+    for i in n :
+        total+=i
+    print("the sum is",total)
+    sum(10)
+    sum(10,20)
+    sum(10,20,30)
