@@ -101,3 +101,6 @@ print(sub(200,100))
 - we can pass the argument values by keyword name . the order does not matter.
 - we can use postional and keyword argument simultaneously.
 - the strict order is first positional and the keyword argument 
+def wish(name,msg):
+    print("hello",name,msg)
+wish(name='python',msg="how are you?")
