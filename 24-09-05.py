@@ -147,3 +147,38 @@ def numberrange():
     else:
         print("your number is out of range",x)
 numberrange()
+## task
+- input:123456
+- output:623451
+case:1
+def task():
+    num =input("enter num:")
+    listn= list(num)
+    listn[0],listn[-1]=listn[-1],listn[0]
+    print(listn)
+task()
+case:2
+x = input('enter any num : ')  
+print(x[-1] + x[1:(len(x)-1)] +x[0])
+case:3
+# swap first and last
+def swap(number):
+    #find num of digit
+    numdigit=0
+    temp=number
+    while temp>0:
+        temp//=10
+        numdigit+=1
+    #handle one digit
+    if numdigit<=1:
+        return number
+    #extract first and last
+    f=number//(10**(numdigit-1))
+    l=number%10
+    #remove first and last digit
+    numwithout=(number%(10**(numdigit-1)))//10
+    #swaped number
+    swapnum=l*(10**(numdigit-1))+ numwithout*10+f
+    return swapnum
+num=int(input("enter num"))
+swap(num)
