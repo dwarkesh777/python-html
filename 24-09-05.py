@@ -8,3 +8,6 @@ def greet():
     print("hello world")
 ## calling function
 greet()
+## function specification
+- it include function name,parameters(if any) , and return type.
+- ideally ,it mean include docstring
