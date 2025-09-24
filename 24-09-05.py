@@ -88,3 +88,12 @@ def square(x=20):
     return x*x
 print(square())# default
 print(square(10))
+## positional argument
+- the number of argument and position of argument must be matched.
+- if we changed the order ,the result may changed.
+- if we change the number of argument , we will get error
+def sub(x,y):
+    return x-y
+print(sub(100,200))
+print(sub(200,100))
+# print(sub(100,200,300))
