@@ -120,3 +120,9 @@ def sum(*n):
     sum(10)
     sum(10,20)
     sum(10,20,30)
+## global and variables
+x = 5
+def fun():
+    x=100
+    print(x)
+    fun()
