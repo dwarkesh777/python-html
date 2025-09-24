@@ -52,3 +52,11 @@ def printline():
         
 t=printline()
 print(t)
+## wrt function evenodd to check whether given no is even or odd
+def evenodd():
+    s=int(input("enter number"))
+    if s%2==0:
+        print("even number",s)
+    else:
+        print("odd number",s)
+evenodd()
