@@ -60,3 +60,9 @@ def evenodd():
     else:
         print("odd number",s)
 evenodd()
+## returning multiple values
+def sumsub(x,y):
+    sum=x+y
+    sub=x-y
+    return sum,sub
+sumsub(8,9)
