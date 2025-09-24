@@ -7,3 +7,4 @@
 def greet():
     print("hello world")
 ## calling function
+greet()
