@@ -133,3 +133,17 @@ def fun():
     print(x)
     fun()
     print(x)
+## python seraches through yhe scope using following rule
+- lebg-
+- local
+- enclosed
+- globle
+- bultin
+## wrt to take a number input from the user and check whether it is with in range by definding a function name numberrange
+def numberrange():
+    x=int(input("enter number"))
+    if x>=0 and x<=100:
+        print("your number in range",x)
+    else:
+        print("your number is out of range",x)
+numberrange()
