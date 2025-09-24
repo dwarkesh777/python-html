@@ -26,3 +26,29 @@ def add(x,y): # parameter
     print(f"sum is:",result) 
 ## calling function
 add(1,20) ## 1 and 20 are the argument
+## 1.No parameter and No return type
+def printline():
+    s = input("enter the name = ")
+    print(s)
+printline()
+## 2.with parameter and No return type
+def printline(s):
+        print(s)
+        
+m = input("enter the name = ")
+
+printline(m)
+## 3.with parameter and with return type
+def printline(s):
+        print(s)
+        
+m = input("enter the name = ")
+t=printline(m)
+print(t)
+## 4.No parameter and with return type
+def printline():
+    m = input("enter the name = ")
+    return m
+        
+t=printline()
+print(t)
