@@ -97,3 +97,7 @@ def sub(x,y):
 print(sub(100,200))
 print(sub(200,100))
 # print(sub(100,200,300))
+## keyword Argument
+- we can pass the argument values by keyword name . the order does not matter.
+- we can use postional and keyword argument simultaneously.
+- the strict order is first positional and the keyword argument 
