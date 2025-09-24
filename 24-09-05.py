@@ -24,3 +24,5 @@ def add(x,y): # parameter
     """
     result = x+y
     print(f"sum is:",result) 
+## calling function
+add(1,20) ## 1 and 20 are the argument
