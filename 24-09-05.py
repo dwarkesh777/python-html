@@ -6,3 +6,4 @@
 ## definding function
 def greet():
     print("hello world")
+## calling function
