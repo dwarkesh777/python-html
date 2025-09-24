@@ -126,3 +126,10 @@ def fun():
     x=100
     print(x)
     fun()
+x = 5
+def fun():
+    global x
+    x=100
+    print(x)
+    fun()
+    print(x)
