@@ -66,3 +66,25 @@ def sumsub(x,y):
     sub=x-y
     return sum,sub
 sumsub(8,9)
+
+x,y=sumsub(8,9)
+print(x)
+print(y)
+
+## defind a function  a calculator that return addition,sub,multi,divison and **
+def calc(x,y):
+    sum=x+y
+    sub=x-y
+    mul=x*y
+    expo=x**y
+    div=x//y
+    return sum,mul,expo,sub,div
+calc(4,5)
+## function parameter and argument 
+- a parameter is a variable name listed in the function parenthesis
+- an argument is the value passed through the parameter when you call the function
+## default argument
+def square(x=20):
+    return x*x
+print(square())# default
+print(square(10))
