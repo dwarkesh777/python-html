@@ -104,3 +104,4 @@ print(sub(200,100))
 def wish(name,msg):
     print("hello",name,msg)
 wish(name='python',msg="how are you?")
+wish(msg="how are you?",name='python')
