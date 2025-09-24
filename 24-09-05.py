@@ -105,3 +105,9 @@ def wish(name,msg):
     print("hello",name,msg)
 wish(name='python',msg="how are you?")
 wish(msg="how are you?",name='python')
+## second case
+wish("c++","goodmorning")
+## third case
+wish("c++",msg="goodmorning")
+
+wish(name="go","good afternoon")
