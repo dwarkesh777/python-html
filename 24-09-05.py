@@ -195,3 +195,21 @@ def f():
     g()
     print('inside f function')
 f()
+
+def g(x):
+    def h():
+        x='abc'
+        return x
+    x=x+1
+    print("in g function x is ",x)
+    print(h())
+    return x
+x=3
+z=g(x)
+print(z)
+print(x)
+# output
+in g function x is  4
+abc
+4
+3
