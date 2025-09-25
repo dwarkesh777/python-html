@@ -61,3 +61,5 @@ print("sum",sum)
 print("sub",sub)
 print("min",min)
 print("max",max)
+## if any score is higher then 100 after all score enter value more then 100 has been 100
+## drop 2 lowest score and the find the avg
