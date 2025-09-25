@@ -182,3 +182,5 @@ def swap(number):
     return swapnum
 num=int(input("enter num"))
 swap(num)
+
+## nested function
