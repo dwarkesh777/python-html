@@ -37,3 +37,27 @@ while not found:
         print("new number",y)
         found=True
     x+=1
+## after this print sum , avg , minimum and maximum number form given input
+sum=0
+avg=0
+min=0
+sub=0
+max=0
+count=0
+flag=True
+while True
+    x=input(("enter your number"))
+    if x=="quit":
+        break
+    y=int(x)
+    count+=1
+    sum+=y
+    sub-=y
+    if(y<min):
+        min=y
+    if(y>max):
+        max=y
+print("sum",sum)
+print("sub",sub)
+print("min",min)
+print("max",max)
