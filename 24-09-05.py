@@ -184,3 +184,14 @@ num=int(input("enter num"))
 swap(num)
 
 ## nested function
+def f():
+    def g():
+        print("inside g function")
+    print('inside f function')
+
+def f():
+    def g():
+        print("inside g function")
+    g()
+    print('inside f function')
+f()
