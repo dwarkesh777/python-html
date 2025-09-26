@@ -47,8 +47,7 @@ method:2post
 
 <body>
 
-    <form action="https://github.com/dwarkesh777/python-html/blob/main/26-09-25.html" method="post"
-        style="background-color: rgba(101, 165, 42, 0.445);">
+    <form action="#" method="post" style="background-color: rgba(101, 165, 42, 0.445);">
         <fieldset>
             <legend style="text-align: center;">login page</legend>
             <input type="text" name="uname" placeholder="enter user name" maxlength="10" minlength="0">name<br />
@@ -65,14 +64,17 @@ method:2post
             <input type="radio" name="r1" value="male">male
             <input type="radio" name="r1" value="female" checked>female<br>
             <input type="search"> search <br>
-            <input type="submit"><input type="reset">
             <input list="browsers" name="browser" value="enter city name">
-            <datalist id="browsers" >
+            <datalist id="browsers">
                 <option value="chorme">
                 <option value="internet">
                 <option value="chormebook">
-            </datalist>
-
+            </datalist><br>
+            <input type="text" name="h1" value="hide" hidden>it is hidden</br> 
+            #hidden,readonly,diasabled use any type
+            <input type="text" name="r1" value="ro" readonly>readonly<br>
+            <input type="text" name="d1" value="da" disabled>disabled<br>
+            <input type="submit"><input type="reset">
         </fieldset>
     </form>
 </body>
