@@ -61,8 +61,9 @@ method:2post
             <input type="file" name="f1" accept=".jpg,.pdf" multiple> attach <br>
             <input type="checkbox">a <input type="checkbox">d<input type="checkbox">e<input type="checkbox">f<input
                 type="checkbox">g<br>
-            <input type="radio" name="r1" value="male">male
-            <input type="radio" name="r1" value="female" checked>female<br>
+            <input type="radio" name="r1" value="male"><label>male</label>
+            <label><input type="text">male</label>
+            <input type="radio" name="r1" value="female" checked><label>female</label><br>
             <input type="search"> search <br>
             <input list="browsers" name="browser" value="enter city name">
             <datalist id="browsers">
@@ -70,10 +71,12 @@ method:2post
                 <option value="internet">
                 <option value="chormebook">
             </datalist><br>
-            <input type="text" name="h1" value="hide" hidden>it is hidden</br> 
+            <input type="text" name="h1" value="hide" hidden>it is hidden</br>
             #hidden,readonly,diasabled use any type
             <input type="text" name="r1" value="ro" readonly>readonly<br>
             <input type="text" name="d1" value="da" disabled>disabled<br>
+            <textarea rows="10" cols="10">address</textarea>
+            <!-- rows and cols not complasury -->
             <input type="submit"><input type="reset">
         </fieldset>
     </form>
