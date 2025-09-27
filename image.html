@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>image</title>
+</head>
+<!-- <line>
+x1:starting of line x axis
+y1:starting of line y axis
+x2:ending of line x axis
+y2:ending of line y axis
+stroke:color
+strokewidth:size
+-->
+<!-- circle
+cx:starting of line x axis
+cy:starting of line y axis
+r :radius
+-->
+<!-- rectangle(rect)
+x=staring 
+y=starting
+heigth
+width
+rx,ry for curve
+-->
+<!-- ellips
+cx,cy :center point
+rx=radis of x
+ry=radius of y 
+-->
+<!-- text
+x,y starting point
+font family
+font size
+fill 
+-->
+<!-- polygon(any shape min 3side )
+ points:points of shape 
+ stroke,stroke-width,fill
+ fill-rule=nonzero/evenodd
+  -->
+<body>
+    <svg height="500" width="500" style="border: 1px solid blue ;">
+        <line x1="0" y1="0" x2="500" y2="500" stroke="blue" stroke-width="5" />
+        <line x1="500" y1="0" x2="0" y2="500" stroke="blue" stroke-width="5" />
+        <circle cx="250" cy="250" r="150" stroke="blue" stroke-width="2" fill="cyan" />
+        <rect x="50" y="50" height="95" width="95" stroke="green"stroke-width="5" fill="limegreen" rx="10" ry="10"/>
+        <rect x="350" y="50" height="95" width="95" stroke="green"stroke-width="5" fill="limegreen" rx="10" ry="10"/>
+        <rect x="55" y="355" height="95" width="95" stroke="green"stroke-width="5" fill="limegreen" rx="10" ry="10"/>
+        <rect x="355" y="355" height="95" width="95" stroke="green"stroke-width="5" fill="limegreen" rx="10" ry="10"/>
+        <polygon points="250,160,190,348,340,228,160,228,310,348" stroke="blue" fill="orange" fill-rule="evenodd"/>
+        <ellipse cx="250" cy="260" rx="30" ry="20" stroke="black"stroke-width="5" fill="red"/>
+         <text x="230" y="265" fill="blue" font-family="verdana" font-size="20px">SDS</text>
+    </svg>
+
+
+</body>
+
+
+</html>
