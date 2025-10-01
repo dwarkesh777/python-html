@@ -1,0 +1,5264 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MCQ Quiz Viewer</title>
+  <style>
+    /* --- Body & Layout --- */
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start; /* align to top */
+      min-height: 100vh;
+      margin: 0;
+      padding-top: 40px; /* spacing from top */
+      box-sizing: border-box;
+    }
+
+    /* --- Search Bar --- */
+    .search-bar {
+      margin: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .search-bar input {
+      padding: 8px;
+      font-size: 16px;
+      width: 200px;
+    }
+
+    /* --- Card Container --- */
+    .card-container {
+      perspective: 1000px;
+      margin: 20px;
+    }
+
+    /* --- Card --- */
+    .card {
+      width: 600px;
+      max-width: 90vw; /* responsive width */
+      min-height: 300px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+      transform-style: preserve-3d;
+      transition: transform 0.6s;
+      cursor: pointer;
+      position: relative;
+      padding: 20px;
+      height: auto;
+      box-sizing: border-box;
+      word-wrap: break-word;
+    }
+
+    /* --- Flip Effect --- */
+    .card.flipped {
+      transform: rotateY(180deg);
+    }
+
+    /* --- Card Sides --- */
+    .card-side {
+      position: relative; /* allows card to grow naturally */
+      width: 100%;
+      padding: 0;
+      backface-visibility: hidden;
+      border-radius: 12px;
+    }
+
+    /* --- Front Side --- */
+    .card-front {
+      background: #ffffff;
+    }
+
+    /* --- Back Side --- */
+.card-back {
+  position: absolute;       /* overlap inside card */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;             /* full card height */
+  background: #4CAF50;
+  color: white;
+  display: flex;
+  align-items: center;      /* vertical center */
+  justify-content: center;  /* horizontal center */
+  transform: rotateY(180deg);
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 12px;      /* match rounded card shape */
+  box-sizing: border-box;
+}
+
+
+    /* --- Question Text & Code --- */
+    .card-front pre,
+    pre.code-block {
+      background: #f5f5f5;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      font-family: monospace;
+      white-space: pre-wrap;  /* wrap long lines */
+      word-wrap: break-word;  /* break long words */
+      overflow-x: auto;       /* scroll only if really long */
+      line-height: 1.5;
+      margin: 10px 0;
+    }
+.footer {
+  position: fixed;
+  bottom: 10px;
+  right: 15px;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.6); /* subtle gray */
+  font-family: Arial, sans-serif;
+}
+
+    /* --- Options --- */
+    .options {
+      margin-top: 15px;
+    }
+
+    .options div {
+      margin: 6px 0;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: #f9f9f9;
+      word-wrap: break-word;
+    }
+
+    /* --- Navigation Buttons --- */
+    .navigation {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+    }
+
+.navigation button {
+  padding: 12px 28px;
+  font-size: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.2);   /* light border */
+  border-radius: 12px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.1);   /* transparent glass */
+  color: #000;                            /* black text */
+  backdrop-filter: blur(10px) saturate(180%);
+  -webkit-backdrop-filter: blur(10px) saturate(180%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.navigation button:hover {
+  background: rgba(255, 255, 255, 0.2);   /* slightly brighter glass */
+  border-color: rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+
+  </style>
+</head>
+<body>
+<center><h1> FCSP-1 MCQ QUESTIONS </h1></center>
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search by Question No.">
+    <button onclick="searchQuestion()">Search</button>
+  </div>
+
+  <div class="card-container">
+    <div class="card" id="quizCard" onclick="flipCard()">
+      <div class="card-side card-front" id="cardFront"></div>
+      <div class="card-side card-back" id="cardBack"></div>
+    </div>
+  </div>
+
+  <div class="navigation">
+    <button onclick="prevQuestion()">Previous</button>
+    <button onclick="nextQuestion()">Next</button>
+  </div>
+
+
+  <script>
+    const questions = [
+  {
+    "No":"1",
+    "unit_number":"1",
+    "question_text":"Which character is used in Python to make a single line comment?",
+    "MCQ Answer":"D",
+    "option A":"\/",
+    "option B":"\/\/",
+    "option C":"!",
+    "option D":"#"
+  },
+  {
+    "No":"2",
+    "unit_number":"1",
+    "question_text":"What will be the output of print(type(2**5)) in python?",
+    "MCQ Answer":"A",
+    "option A":"<class 'int'>",
+    "option B":"<class 'float'>",
+    "option C":"<class 'double'>",
+    "option D":"<class 'integer'>"
+  },
+  {
+    "No":"3",
+    "unit_number":"1",
+    "question_text":"What will be the output of print(type(\"LJU\")) in python?",
+    "MCQ Answer":"C",
+    "option A":"<class 'int'>",
+    "option B":"<class 'float'>",
+    "option C":"<class 'str'>",
+    "option D":"<class 'char'>"
+  },
+  {
+    "No":"4",
+    "unit_number":"1",
+    "question_text":"What will be the output of print(type(3*5\/5)) in python?",
+    "MCQ Answer":"B",
+    "option A":"<class 'int'>",
+    "option B":"<class 'float'>",
+    "option C":"<class 'double'>",
+    "option D":"<class 'integer'>"
+  },
+  {
+    "No":"5",
+    "unit_number":"1",
+    "question_text":"If x=3.123, then int(x) will give ?",
+    "MCQ Answer":"B",
+    "option A":"1",
+    "option B":"3",
+    "option C":"4",
+    "option D":"3.12"
+  },
+  {
+    "No":"6",
+    "unit_number":"1",
+    "question_text":"Which one of the following is correct way of declaring and initialising a variable, x with value 5?",
+    "MCQ Answer":"C",
+    "option A":"int x\nx=5",
+    "option B":"int x=5",
+    "option C":"x=5",
+    "option D":"declare x=5"
+  },
+  {
+    "No":"7",
+    "unit_number":"1",
+    "question_text":"Which of the following is an invalid statement?",
+    "MCQ Answer":"B",
+    "option A":"abc = 1,000,000",
+    "option B":"a b c = 1000 2000 3000",
+    "option C":"a,b,c = 1000, 2000, 3000",
+    "option D":"a_b_c = 1,000,000"
+  },
+  {
+    "No":"8",
+    "unit_number":"1",
+    "question_text":"Which of the following is invalid?",
+    "MCQ Answer":"D",
+    "option A":"_x = 1",
+    "option B":"__x = 1",
+    "option C":" __x__ = 1",
+    "option D":"None of the mentioned"
+  },
+  {
+    "No":"9",
+    "unit_number":"1",
+    "question_text":"Which of the following cannot be a variable?",
+    "MCQ Answer":"B",
+    "option A":"__in__",
+    "option B":"in",
+    "option C":"it",
+    "option D":"__it__"
+  },
+  {
+    "No":"10",
+    "unit_number":"1",
+    "question_text":"Which of the following is an invalid variable?",
+    "MCQ Answer":"B",
+    "option A":"char_1",
+    "option B":"1st_char",
+    "option C":"oopec",
+    "option D":"_"
+  },
+  {
+    "No":"11",
+    "unit_number":"1",
+    "question_text":"What happens when '2' == 2 is executed?",
+    "MCQ Answer":"B",
+    "option A":"True",
+    "option B":"False",
+    "option C":"ValueError",
+    "option D":"TypeError"
+  },
+  {
+    "No":"12",
+    "unit_number":"1",
+    "question_text":"What will be the output of this program?\n_ = '1 2 3 4 5 6'  \nprint(_)",
+    "MCQ Answer":"D",
+    "option A":"SyntaxError: EOL while scanning string literal",
+    "option B":"SyntaxError: invalid syntax",
+    "option C":"NameError: name '_' is not defined",
+    "option D":"1 2 3 4 5 6"
+  },
+  {
+    "No":"13",
+    "unit_number":"1",
+    "question_text":"What will be the output of the following program on execution?\nprint(print(print(\"python\")))",
+    "MCQ Answer":"B",
+    "option A":"None\nNone \npython",
+    "option B":"python\nNone\nNone",
+    "option C":"python",
+    "option D":"Error"
+  },
+  {
+    "No":"14",
+    "unit_number":"1",
+    "question_text":"Which is the correct operator for power(Xy)?",
+    "MCQ Answer":"B",
+    "option A":" X^y",
+    "option B":"X**y",
+    "option C":"X^^y",
+    "option D":"None of the mentioned"
+  },
+  {
+    "No":"15",
+    "unit_number":"1",
+    "question_text":"What is the answer to this expression, 34 % 3 is?",
+    "MCQ Answer":"B",
+    "option A":"7",
+    "option B":"1",
+    "option C":"0",
+    "option D":"5"
+  },
+  {
+    "No":"16",
+    "unit_number":"1",
+    "question_text":"What will be the output of the following program on execution?\na=0\nb=6\n\nx=(a or b) or ((a and a) or (a and b))\nprint(x)",
+    "MCQ Answer":"B",
+    "option A":"0",
+    "option B":"6",
+    "option C":"True",
+    "option D":"False"
+  },
+  {
+    "No":"17",
+    "unit_number":"1",
+    "question_text":"What will be the output of the following program on execution?\na=0\nb=6\n\nx=(a or b) or ((a and a) or (a and b))\ny=not(x)\nprint(y)",
+    "MCQ Answer":"D",
+    "option A":"0",
+    "option B":"6",
+    "option C":"True",
+    "option D":"False"
+  },
+  {
+    "No":"18",
+    "unit_number":"1",
+    "question_text":"What will be the output of this program?\nprint(True ** False \/ True) ",
+    "MCQ Answer":"B",
+    "option A":"True ** False \/ True",
+    "option B":"1",
+    "option C":"0",
+    "option D":"Error"
+  },
+  {
+    "No":"19",
+    "unit_number":"1",
+    "question_text":"Which of the following error occurs when you execute the following Python code? \napple = mango",
+    "MCQ Answer":"C",
+    "option A":"Type Error",
+    "option B":"Value Error",
+    "option C":"Name Error",
+    "option D":"Syntax Error"
+  },
+  {
+    "No":"20",
+    "unit_number":"1",
+    "question_text":"What is the output of this expression, 3*1**3?",
+    "MCQ Answer":"B",
+    "option A":"1",
+    "option B":"3",
+    "option C":"9",
+    "option D":"27"
+  },
+  {
+    "No":"21",
+    "unit_number":"1",
+    "question_text":"Select option that will print:\nhello-how-are-you",
+    "MCQ Answer":"A",
+    "option A":"print(‘hello-‘ + ‘how-are-you’)",
+    "option B":"print(‘hello’, ‘how’, ‘are’, ‘you’)",
+    "option C":"print(‘hello’, ‘how’, ‘are’, ‘you’ + ‘-‘ * 4)",
+    "option D":"print(‘hello’ + ‘-‘ + ‘how’ + ‘-‘ + ‘are’ + ‘you’)"
+  },
+  {
+    "No":"22",
+    "unit_number":"1",
+    "question_text":"Which of the following is not a comparison operator in Python?",
+    "MCQ Answer":"C",
+    "option A":">=",
+    "option B":"<=",
+    "option C":"=",
+    "option D":"!="
+  },
+  {
+    "No":"23",
+    "unit_number":"1",
+    "question_text":"What will be the output of the following program on execution?\na=4\nb=6\nc=3\nprint(a+b*c\/a-b)\n",
+    "MCQ Answer":"C",
+    "option A":"1.5",
+    "option B":"2",
+    "option C":"2.5",
+    "option D":"3"
+  },
+  {
+    "No":"24",
+    "unit_number":"1",
+    "question_text":"What will be the value of the following Python expression?\n8 + 2 % 3",
+    "MCQ Answer":"A",
+    "option A":"10",
+    "option B":"8",
+    "option C":"9",
+    "option D":"7"
+  },
+  {
+    "No":"25",
+    "unit_number":"1",
+    "question_text":"What will be the value of x in the following Python expression?\nx = int(63.55+8\/3)",
+    "MCQ Answer":"B",
+    "option A":"65",
+    "option B":"66",
+    "option C":"23",
+    "option D":"24"
+  },
+  {
+    "No":"26",
+    "unit_number":"1",
+    "question_text":"What are the values of the following Python expressions?\n 2**(3**2)\n (2**3)**2\n 2**3**2",
+    "MCQ Answer":"D",
+    "option A":"64, 512, 64",
+    "option B":"64, 64, 64",
+    "option C":"512, 512, 512",
+    "option D":"512, 64, 512"
+  },
+  {
+    "No":"27",
+    "unit_number":"1",
+    "question_text":"What will be the output of this program?\nprint((7*5**2)\/True*False)",
+    "MCQ Answer":"D",
+    "option A":"175",
+    "option B":"70",
+    "option C":"0",
+    "option D":"0.0"
+  },
+  {
+    "No":"28",
+    "unit_number":"1",
+    "question_text":"What will be the output of this program?\nprint(6 + 5 - 4 * 3 \/ 2 % 1) ",
+    "MCQ Answer":"C",
+    "option A":"15",
+    "option B":"7",
+    "option C":"11",
+    "option D":"10"
+  },
+  {
+    "No":"29",
+    "unit_number":"1",
+    "question_text":"What will be the output of this program?\nprint(int(6 == 6.0) * 3 + 4 % 5)",
+    "MCQ Answer":"C",
+    "option A":"Error",
+    "option B":"22",
+    "option C":"7",
+    "option D":"18"
+  },
+  {
+    "No":"30",
+    "unit_number":"1",
+    "question_text":"What will be the value of X in the following Python expression?\n\nX = 2+9*((3*12)-8)\/10",
+    "MCQ Answer":"D",
+    "option A":"30",
+    "option B":"30.8",
+    "option C":"28.4",
+    "option D":"27.2"
+  },
+  {
+    "No":"31",
+    "unit_number":"1",
+    "question_text":"What will be the output of the following Python code?\nnew= (1 and \"True\") and ('False' or Train)\nstr= 'This statement is '+ new\nprint(\"This is False\" if \"False\" in new else \"This is True\")",
+    "MCQ Answer":"C",
+    "option A":"This is True",
+    "option B":"NameError – Train not defined",
+    "option C":"This is False",
+    "option D":"Syntax Error – invalid syntax"
+  },
+  {
+    "No":"32",
+    "unit_number":"1",
+    "question_text":"What will be the value of the following Python expression?\n8 + 1 % 3",
+    "MCQ Answer":"B",
+    "option A":"8",
+    "option B":"9",
+    "option C":"10",
+    "option D":"11"
+  },
+  {
+    "No":"33",
+    "unit_number":"1",
+    "question_text":"What should be the output of the following python code snippet:\nx=0.0\ny=48>0\nz=11<7\nprint(not(float(x or y or z)))",
+    "MCQ Answer":"B",
+    "option A":"True",
+    "option B":"False",
+    "option C":"Error",
+    "option D":"No output"
+  },
+  {
+    "No":"34",
+    "unit_number":"1",
+    "question_text":"What will be the output of the following program on execution?\n\nx=Str(\"Python is a very\\b simple\\bsubject\")\nprint(x)",
+    "MCQ Answer":"C",
+    "option A":"Python is a verysimpleubject",
+    "option B":"Python is a versimplsubject          ",
+    "option C":"Name Error           ",
+    "option D":"None of mentioned"
+  },
+  {
+    "No":"35",
+    "unit_number":"1",
+    "question_text":"What is the output of the following assignment operator\na=10\nb=a-=2\nprint(b)",
+    "MCQ Answer":"D",
+    "option A":"12",
+    "option B":"8",
+    "option C":"9",
+    "option D":"Syntax Error"
+  },
+  {
+    "No":"36",
+    "unit_number":"1",
+    "question_text":"What will be the output of the following program on execution?\na=4\nb=6\nc=3\nd=2\nprint(a+d**b*c\/a-b)",
+    "MCQ Answer":"B",
+    "option A":"64",
+    "option B":"46",
+    "option C":"52",
+    "option D":"192"
+  },
+  {
+    "No":"37",
+    "unit_number":"1",
+    "question_text":"What will be the output of this program?\nprint(int(\"6\" == 6.0) * 3 + 4 % 5)",
+    "MCQ Answer":"A",
+    "option A":"4",
+    "option B":"6",
+    "option C":"22",
+    "option D":"Error"
+  },
+  {
+    "No":"38",
+    "unit_number":"1",
+    "question_text":"What will be the output of the following program on execution?\na=0\nb=6\nc=9\nd=10\n\nx=(a or b) and ((a or c) or (b and d))\nprint(x)",
+    "MCQ Answer":"C",
+    "option A":"0",
+    "option B":"6",
+    "option C":"9",
+    "option D":"10"
+  },
+  {
+    "No":"39",
+    "unit_number":"1",
+    "question_text":"What will be the value of X in the following Python expression?\nX = 2+9*((3*12)-8)\/10\nprint(bool(X)) ",
+    "MCQ Answer":"A",
+    "option A":"True",
+    "option B":"0",
+    "option C":"30",
+    "option D":"30.8"
+  },
+  {
+    "No":"40",
+    "unit_number":"1",
+    "question_text":"What will be the datatype of the var in the below code snippet?\nvar = 10\nprint(type(var))\nvar = \"Hello\"\nprint(type(var))",
+    "MCQ Answer":"B",
+    "option A":"int",
+    "option B":"int,str",
+    "option C":"str",
+    "option D":"str,str"
+  },
+  {
+    "No":"41",
+    "unit_number":"1",
+    "question_text":"What will be the output of this program?\nprint(True * False \/ True)",
+    "MCQ Answer":"B",
+    "option A":"0",
+    "option B":"0.0",
+    "option C":"1.0",
+    "option D":"Error"
+  },
+  {
+    "No":"42",
+    "unit_number":"1",
+    "question_text":"What is the output of the following python code:\nx=125\ny=13\nx\/\/=y\nprint(x)",
+    "MCQ Answer":"C",
+    "option A":"125\/13",
+    "option B":"10",
+    "option C":"9",
+    "option D":"9.62"
+  },
+  {
+    "No":"43",
+    "unit_number":"1",
+    "question_text":"What is the output of following python code:\nprint(bool(0), bool(3.14159), bool(-3), bool(False))",
+    "MCQ Answer":"A",
+    "option A":"False True True False",
+    "option B":"True True True False",
+    "option C":"False False True False",
+    "option D":"False True False False"
+  },
+  {
+    "No":"44",
+    "unit_number":"1",
+    "question_text":"a=5\nb=10\nc=1\nprint(a**c, b\/\/a, c%a)",
+    "MCQ Answer":"B",
+    "option A":"5 2 2",
+    "option B":"5 2 1",
+    "option C":"5 2 5",
+    "option D":"5 10 5"
+  },
+  {
+    "No":"45",
+    "unit_number":"1",
+    "question_text":"Which of the following is invalid?",
+    "MCQ Answer":"A",
+    "option A":"1x=1",
+    "option B":"x1=1",
+    "option C":"__x__=1",
+    "option D":"_x=1"
+  },
+  {
+    "No":"46",
+    "unit_number":"1",
+    "question_text":"What is the output of this expression, 3**1**3\/True?",
+    "MCQ Answer":"C",
+    "option A":"1",
+    "option B":"3",
+    "option C":"3",
+    "option D":"27"
+  },
+  {
+    "No":"47",
+    "unit_number":"1",
+    "question_text":"What will be the output of the following program on execution?\na=0\nb=5\na or b ==5 or True + 7 -4 * 3",
+    "MCQ Answer":"A",
+    "option A":"True  ",
+    "option B":"1",
+    "option C":"0",
+    "option D":"False  "
+  },
+  {
+    "No":"48",
+    "unit_number":"1",
+    "question_text":"What will be the output of the following program on execution?\na=50\nb=60\nprint((a and b)\/False)",
+    "MCQ Answer":"D",
+    "option A":"0",
+    "option B":"60",
+    "option C":"50",
+    "option D":"Error"
+  },
+  {
+    "No":"49",
+    "unit_number":"2",
+    "question_text":"What does the following code print?\nif 4 + 5 == 10:\n    print(\"TRUE\")\nelse:\n    print(\"FALSE\")\nprint(\"TRUE\")",
+    "MCQ Answer":"C",
+    "option A":"1",
+    "option B":"TRUE\n  FALSE",
+    "option C":"FALSE\n  TRUE",
+    "option D":"TRUE\n  FALSE\n  TRUE"
+  },
+  {
+    "No":"50",
+    "unit_number":"2",
+    "question_text":"What does the following code print?\n\nx = -10\nif x < 0:\n    print(\"The negative number \",  x, \" is not valid here.\")\nprint(\"This is always printed\")",
+    "MCQ Answer":"B",
+    "option A":"This is always printed",
+    "option B":"The negative number -10 is not valid here.\nThis is always printed",
+    "option C":"The negative number -10 is not valid here",
+    "option D":"It will cause an error because every if statement must have an else statement."
+  },
+  {
+    "No":"51",
+    "unit_number":"2",
+    "question_text":"Which of the following is true about the code below?\n\nx = 3\nif (x > 2):\n    x = x * 2;\nif (x > 4):\n    x = 0;\nprint(x)",
+    "MCQ Answer":"C",
+    "option A":"x will always equal 0 after this code executes for any value of x",
+    "option B":"if x is greater than 2, the value in x will be doubled after this code executes",
+    "option C":"if x is greater than 2, x will equal 0 after this code executes",
+    "option D":"None of mentioned"
+  },
+  {
+    "No":"52",
+    "unit_number":"2",
+    "question_text":"Which one of the following is a valid Python if statement?",
+    "MCQ Answer":"A",
+    "option A":"if a>=2 :",
+    "option B":"if (a >= 2)",
+    "option C":"if (a => 22)",
+    "option D":"if a >= 22"
+  },
+  {
+    "No":"53",
+    "unit_number":"2",
+    "question_text":"What keyword would you use to add an alternative condition to an if statement?",
+    "MCQ Answer":"C",
+    "option A":"else if",
+    "option B":"elseif",
+    "option C":"elif",
+    "option D":"None of the above"
+  },
+  {
+    "No":"54",
+    "unit_number":"2",
+    "question_text":"Which of the following will evaluate to true?\nI. True and False\nII. False or True\nIII. False and (True or False)",
+    "MCQ Answer":"B",
+    "option A":"I",
+    "option B":"II",
+    "option C":"I and II",
+    "option D":"II and III"
+  },
+  {
+    "No":"55",
+    "unit_number":"2",
+    "question_text":"Given two variables, num1 and num2, which of the following would mean that both num1 and num2 are positive integers?",
+    "MCQ Answer":"D",
+    "option A":"(num1 == num2)",
+    "option B":"(num1 == num2) or (num1 > 0)",
+    "option C":"(num1 == num2) and (num1 < 0)",
+    "option D":"(num1 == num2) and (num1 > 0)"
+  },
+  {
+    "No":"56",
+    "unit_number":"2",
+    "question_text":"What is the output from the following code?\na = 3\nb = (a != 3)\nprint(b)",
+    "MCQ Answer":"B",
+    "option A":"True ",
+    "option B":"False    ",
+    "option C":"0",
+    "option D":"3"
+  },
+  {
+    "No":"57",
+    "unit_number":"2",
+    "question_text":"Which of the following evaluates to True when a is equal to b or when a is equal to 5?",
+    "MCQ Answer":"C",
+    "option A":"a == b == 5",
+    "option B":"a = b or a = 5",
+    "option C":"a == b or a == 5",
+    "option D":"a = b and a = 5"
+  },
+  {
+    "No":"58",
+    "unit_number":"2",
+    "question_text":"Which statement will check if a is equal to b?",
+    "MCQ Answer":"B",
+    "option A":"if a = b:",
+    "option B":"if a == b:",
+    "option C":"if a === c:",
+    "option D":"if a == b"
+  },
+  {
+    "No":"59",
+    "unit_number":"2",
+    "question_text":"Given the nested if-else structure below, what will be the value of x after code execution completes\nx = 0\na = 0\nb = -5\nif a > 0:\n    if b < 0: \n        x = x + 5 \n    elif a > 5:\n        x = x + 4\n    else:\n        x = x + 3\nelse:\n    x = x + 4\nprint(x)",
+    "MCQ Answer":"D",
+    "option A":"2",
+    "option B":"0",
+    "option C":"3",
+    "option D":"4"
+  },
+  {
+    "No":"60",
+    "unit_number":"2",
+    "question_text":"Given the nested if-else below, what will be the value x when the code executed successfully\nx = 2\na = 5\nb = 5\nif a > 0:\n    if b < 0: \n        x = x + 5 \n    elif a > 5:\n        x = x + 4\n    else:\n        x = x + 3\nelse:\n    x = x + 2\nprint(x)",
+    "MCQ Answer":"B",
+    "option A":"0",
+    "option B":"5",
+    "option C":"2",
+    "option D":"3"
+  },
+  {
+    "No":"61",
+    "unit_number":"2",
+    "question_text":"What is the output of the following if statement\na, b = 12, 5\nif a + b:\n    print('True')\nelse:\n  print('False')",
+    "MCQ Answer":"B",
+    "option A":"False\n",
+    "option B":"True\n  ",
+    "option C":"Can't predict",
+    "option D":"None of these"
+  },
+  {
+    "No":"62",
+    "unit_number":"2",
+    "question_text":"Which of the following is not used as loop in Python?",
+    "MCQ Answer":"C",
+    "option A":"for loop",
+    "option B":"while loop",
+    "option C":"do-while loop",
+    "option D":"None of the above"
+  },
+  {
+    "No":"63",
+    "unit_number":"2",
+    "question_text":"A loop becomes infinite loop if a condition never becomes ________.",
+    "MCQ Answer":"B",
+    "option A":"True\n  ",
+    "option B":"False\n",
+    "option C":"Null",
+    "option D":"Both A and C"
+  },
+  {
+    "No":"64",
+    "unit_number":"2",
+    "question_text":"If the else statement is used with a while loop, the else statement is executed when the condition becomes _______.",
+    "MCQ Answer":"B",
+    "option A":"True\n  ",
+    "option B":"False\n",
+    "option C":"Infinite",
+    "option D":"Null"
+  },
+  {
+    "No":"65",
+    "unit_number":"2",
+    "question_text":"Python programming language allows to use one loop inside another loop known as?",
+    "MCQ Answer":"C",
+    "option A":"switch",
+    "option B":"foreach",
+    "option C":"nested",
+    "option D":"forall"
+  },
+  {
+    "No":"66",
+    "unit_number":"2",
+    "question_text":"What will be the output of given Python code?\nn=7\nc=0\nwhile(n):\n    if(n>5):\n        c=c+n-1\n        n=n-1\n    else:\n        break\nprint(n)\nprint(c) ",
+    "MCQ Answer":"B",
+    "option A":"4\n16",
+    "option B":"5\n11",
+    "option C":"6\n7",
+    "option D":"5\n10"
+  },
+  {
+    "No":"67",
+    "unit_number":"2",
+    "question_text":"How many times will the loop run?\ni=2\nwhile(i>0):\n    i=i-1",
+    "MCQ Answer":"A",
+    "option A":"2",
+    "option B":"3",
+    "option C":"1",
+    "option D":"0"
+  },
+  {
+    "No":"68",
+    "unit_number":"2",
+    "question_text":"How many times will the condition will be checked?\ni=2\nwhile(i>0):\n    i=i-1",
+    "MCQ Answer":"B",
+    "option A":"2",
+    "option B":"3",
+    "option C":"1",
+    "option D":"0"
+  },
+  {
+    "No":"69",
+    "unit_number":"2",
+    "question_text":"What is the value of the var after the for loop completes its execution\nvar = 10\nfor i in range(10):\n    for j in range(2, 10, 1):\n        if var % 2 == 0:\n            continue\n            var += 1\n    var+=1\nelse:\n    var+=1\nprint(var)",
+    "MCQ Answer":"B",
+    "option A":"20",
+    "option B":"21",
+    "option C":"10",
+    "option D":"30"
+  },
+  {
+    "No":"70",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following Python code?\nfor i in range(0,2,-1):\n    print(\"Hello\")",
+    "MCQ Answer":"C",
+    "option A":"Hello",
+    "option B":"Hello Hello",
+    "option C":"No Output",
+    "option D":"Error"
+  },
+  {
+    "No":"71",
+    "unit_number":"2",
+    "question_text":"Which of the following is a valid for loop in Python?",
+    "MCQ Answer":"B",
+    "option A":"for(i=0; i < n; i++)",
+    "option B":"for i in range(0,5):",
+    "option C":"for i in range(0,5)",
+    "option D":"for i in range(5)"
+  },
+  {
+    "No":"72",
+    "unit_number":"2",
+    "question_text":"Which of the following sequences would be generated by the given line of code?\nrange (5, 0, -2)",
+    "MCQ Answer":"C",
+    "option A":"5 4 3 2 1 0 -1",
+    "option B":"5 4 3 2 1 0",
+    "option C":"5 3 1",
+    "option D":"None of the above"
+  },
+  {
+    "No":"73",
+    "unit_number":"2",
+    "question_text":"What is the output of the following for loop and  range() function\nfor num in range(-2,-5,-1):\n    print(num, end=\", \")",
+    "MCQ Answer":"D",
+    "option A":" -2, -1, -3, -4",
+    "option B":"-2, -1, 0, 1, 2, 3,",
+    "option C":"-2, -1, 0",
+    "option D":" -2, -3, -4,"
+  },
+  {
+    "No":"74",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following code?\nx = 12\nfor i in x:\n    print(i)",
+    "MCQ Answer":"C",
+    "option A":"12",
+    "option B":"1 2",
+    "option C":"Error",
+    "option D":"None of the above"
+  },
+  {
+    "No":"75",
+    "unit_number":"2",
+    "question_text":"What is the value of x after the following nested for loop completes its execution\nx = 0\nfor i in range(10):\n  for j in range(-1, -10, -1):\n    x += 1\n    print(x)",
+    "MCQ Answer":"B",
+    "option A":"99",
+    "option B":"90",
+    "option C":"100",
+    "option D":"101"
+  },
+  {
+    "No":"76",
+    "unit_number":"2",
+    "question_text":"What is the output of the following range() function\nfor num in range(2,-5,-1):\n    print(num, end=\", \")",
+    "MCQ Answer":"C",
+    "option A":"2, 1, 0,",
+    "option B":"2, 1, 0, -1, -2, -3, -4, -5,",
+    "option C":"2, 1, 0, -1, -2, -3, -4,",
+    "option D":"None of these"
+  },
+  {
+    "No":"77",
+    "unit_number":"2",
+    "question_text":"What is the value of x\nx = 0\nwhile (x < 100):\n  x+=2\nprint(x)",
+    "MCQ Answer":"D",
+    "option A":"101",
+    "option B":"99",
+    "option C":"None of the above, this is an infinite loop",
+    "option D":"100"
+  },
+  {
+    "No":"78",
+    "unit_number":"2",
+    "question_text":"What is the output of the following nested loop\nfor num in range(10, 14):\n   for i in range(2, num):\n       if num%i == 1:\n          print(num)\n          break",
+    "MCQ Answer":"B",
+    "option A":"11\n12\n13\n14",
+    "option B":"10\n11\n12\n13",
+    "option C":"9\n10\n11\n12\n",
+    "option D":"12\n13\n14\n15"
+  },
+  {
+    "No":"79",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following Python code?\ni = 1\nwhile True:\n    if i%3 == 0:\n        break\n    print(i)\n    i += 1",
+    "MCQ Answer":"A",
+    "option A":"1\n2",
+    "option B":"1\n2\n3",
+    "option C":"Error",
+    "option D":"None of these"
+  },
+  {
+    "No":"80",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following Python code?\ni = 1\nwhile True:\n    if i%2 == 0:\n        break\n    print(i)\n    i += 2",
+    "MCQ Answer":"D",
+    "option A":"1",
+    "option B":"1\n2",
+    "option C":"1\n2\n3\n4\n5\n6…",
+    "option D":"1 \n3 \n5 \n7 \n9 \n11 …"
+  },
+  {
+    "No":"81",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following Python code?\ni = 2\nwhile True:\n    if i%3 == 0:\n        break\n    print(i)\n    i += 2",
+    "MCQ Answer":"B",
+    "option A":"2\n4\n6\n8\n10..",
+    "option B":"2\n4",
+    "option C":"2\n3",
+    "option D":"Error"
+  },
+  {
+    "No":"82",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following Python code?\ni = 1\nwhile False:\n    if i%2 == 0:\n        break\n    print(i)\n    i += 2",
+    "MCQ Answer":"D",
+    "option A":"1",
+    "option B":"1\n3\n5\n7..",
+    "option C":"1\n2\n3\n4..",
+    "option D":"None of these"
+  },
+  {
+    "No":"83",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following Python code?\nTrue = False\nwhile True:\n    print(True)\n    break",
+    "MCQ Answer":"D",
+    "option A":"True\n  ",
+    "option B":"False\n",
+    "option C":null,
+    "option D":"Error"
+  },
+  {
+    "No":"84",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following Python code?\n\nfor i in range(0):\n    print(i)",
+    "MCQ Answer":"B",
+    "option A":"0",
+    "option B":"No output",
+    "option C":"Error",
+    "option D":"None of mentioned "
+  },
+  {
+    "No":"85",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following Python code?\n\nfor i in range(2.0):\n    print(i)",
+    "MCQ Answer":"C",
+    "option A":"0.0 1.0",
+    "option B":"0 1",
+    "option C":"Error",
+    "option D":"None of mentioned "
+  },
+  {
+    "No":"86",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following Python code?\n\nfor i in range(int(2.0)):\n    print(i)",
+    "MCQ Answer":"B",
+    "option A":"0.0 1.0",
+    "option B":"0\n 1",
+    "option C":"Error",
+    "option D":"None of mentioned "
+  },
+  {
+    "No":"87",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following Python code?\nfor i in range(float('inf')):\n    print (i)",
+    "MCQ Answer":"D",
+    "option A":"0.0 0.1 0.2 0.3 …",
+    "option B":"0 1 2 3 …",
+    "option C":"0.0 1.0 2.0 3.0 …",
+    "option D":"None of mentioned "
+  },
+  {
+    "No":"88",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following Python code?\nfor i in range(5):\n    if i == 5:\n        break\n    else:\n        print(i)\nelse:\n    print(\"Here\")",
+    "MCQ Answer":"A",
+    "option A":"0\n1\n2\n3\n4\nHere",
+    "option B":"0\n1\n2\n3\n4\n5\nHere",
+    "option C":"0\n1\n2\n3\n4",
+    "option D":"1\n2\n3\n4\n5"
+  },
+  {
+    "No":"89",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following Python code?\nfor i in range(10):\n    if i == 5:\n        break\n    else:\n        print(i)\nelse:\n    print(\"Here\")",
+    "MCQ Answer":"C",
+    "option A":"0\n1\n2\n3\n4\nHere",
+    "option B":"0\n1\n2\n3\n4\n5\nHere",
+    "option C":"0\n1\n2\n3\n4",
+    "option D":"1\n2\n3\n4\n5"
+  },
+  {
+    "No":"90",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following Python code snippet?\n\nx = 2\nfor i in range(x):\n    x -= 2\n    print (x)",
+    "MCQ Answer":"B",
+    "option A":"0\n1\n2\n3\n4",
+    "option B":"0\n-2",
+    "option C":"0",
+    "option D":"Error"
+  },
+  {
+    "No":"91",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following Python code snippet?\nx = 2\nfor i in range(x):\n    x += 1\n    print (x)",
+    "MCQ Answer":"C",
+    "option A":"0\n1\n2\n3\n4..",
+    "option B":"0\n1",
+    "option C":"3\n4",
+    "option D":"0\n1\n2\n3"
+  },
+  {
+    "No":"92",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following Python code?\n\ni = 0\nwhile i < 5:\n    print(i)\n    i += 1\n    if i == 3:\n        break\nelse:\n    print(0)",
+    "MCQ Answer":"A",
+    "option A":"0\n1\n2",
+    "option B":"0\n1\n2\n0",
+    "option C":"Error",
+    "option D":"None of these"
+  },
+  {
+    "No":"93",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following Python code?\n\ni = 0\nwhile i < 3:\n    print(i)\n    i += 1\nelse:\n    print(0)",
+    "MCQ Answer":"C",
+    "option A":"0\n1\n2",
+    "option B":"0\n1\n2\n3\n0",
+    "option C":"0\n1\n2\n0",
+    "option D":"Error"
+  },
+  {
+    "No":"94",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following Python code?\n\nx = 2\nfor i in range(x):\n    x -= 2\n    print (x)",
+    "MCQ Answer":"B",
+    "option A":"0 \n1 \n2 \n3 \n4 …",
+    "option B":"0 \n-2",
+    "option C":"0",
+    "option D":"error"
+  },
+  {
+    "No":"95",
+    "unit_number":"2",
+    "question_text":"The continue statement can be used in?",
+    "MCQ Answer":"D",
+    "option A":"while loop",
+    "option B":"for loop",
+    "option C":"do-while",
+    "option D":"Both A and B"
+  },
+  {
+    "No":"96",
+    "unit_number":"2",
+    "question_text":"What is the output of following  python code?\n\nint(\"Enter value of x:\") \nfor in range[0, 10]: \n    print(\"They are equal\") \nelse: \n    print( \"They are unequal\")",
+    "MCQ Answer":"D",
+    "option A":"They are unequal",
+    "option B":"They are equal",
+    "option C":"0,1,2,3,4,5,6,7,8,9",
+    "option D":"SyntaxError"
+  },
+  {
+    "No":"97",
+    "unit_number":"2",
+    "question_text":"What is the output of following python code?\n\na = 5\nb = 5.0\nprint('yes') if (a == b) else 'no'",
+    "MCQ Answer":"A",
+    "option A":"yes",
+    "option B":"no",
+    "option C":"ZeroError",
+    "option D":"SyntaxError"
+  },
+  {
+    "No":"98",
+    "unit_number":"2",
+    "question_text":"What is the output of following  python code?\n\na = b = 0\nif (a = b):\n    print(0) \nelse:\n    print('otherwise')",
+    "MCQ Answer":"D",
+    "option A":"yes",
+    "option B":"0",
+    "option C":"ZeroError",
+    "option D":"SyntaxError"
+  },
+  {
+    "No":"99",
+    "unit_number":"2",
+    "question_text":"What is the output of following  python code?\n\nStep = 3 \nfor e in range(0, step): \n    if e%2==0: \n        print('hello') \n    else: \n        print('goodbye')",
+    "MCQ Answer":"B",
+    "option A":"3",
+    "option B":"NameError",
+    "option C":"ZeroError",
+    "option D":"SyntaxError"
+  },
+  {
+    "No":"100",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following Python code?\nx = 123\nfor i in x:\n    print(i)",
+    "MCQ Answer":"C",
+    "option A":"1 2 3         ",
+    "option B":"123",
+    "option C":"TypeError        ",
+    "option D":"KeyError       "
+  },
+  {
+    "No":"101",
+    "unit_number":"2",
+    "question_text":"What is the output of the following snippet?\ntheSum = 0\nfor count in range(2, 11, 2):\n    theSum += count\nprint(theSum)",
+    "MCQ Answer":"C",
+    "option A":"25",
+    "option B":"20",
+    "option C":"30",
+    "option D":"23"
+  },
+  {
+    "No":"102",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following snippet?\na = True\nb = False\nc = False\n  \nif not a or b:\n    print (1)\nelif not a or not b and c:\n    print (2)\nelif not a or b or not b and a:\n    print (3)\nelse:\n    print (4)",
+    "MCQ Answer":"C",
+    "option A":"1",
+    "option B":"2",
+    "option C":"3",
+    "option D":"4"
+  },
+  {
+    "No":"103",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following Python code?\nvar = 10\nfor i in range(5):\n     for j in range(2, 3, 1):\n          if var%2 == 0:\n              break\n          var += 1\n     var+=1\nelse:\n     var+=1\nprint(var)",
+    "MCQ Answer":"B",
+    "option A":"19",
+    "option B":"20",
+    "option C":"21",
+    "option D":"14"
+  },
+  {
+    "No":"104",
+    "unit_number":"2",
+    "question_text":"What will be output of following code?\nA=70\nif A>90:\n    print('Grade A')\nelif A>70 and A<90:\n    print('Grade B')\nelif A>50 and A<70:\n    print('Grade C')\nelif A>35 and A<50:\n    print('Grade D')\nelse:\n    print('Fail')",
+    "MCQ Answer":"D",
+    "option A":"Grade A",
+    "option B":"Grade B",
+    "option C":"Grade C",
+    "option D":"Fail"
+  },
+  {
+    "No":"105",
+    "unit_number":"2",
+    "question_text":"What will be output of following code?\nseconds=3650\nif seconds>=3600:\n    hour=seconds\/\/3600\n    seconds %= 3600\n    print(hour,\"hours\",end=\" \")\nif seconds>=60:\n    minute=seconds\/\/60\n    seconds %= 60\n    print(minute,\"minutes\",end=\" \")\nif seconds>0:\n    print(seconds,\"seconds\")",
+    "MCQ Answer":"A",
+    "option A":"1 hours 50 seconds",
+    "option B":"1 hours 0 minutes 50 seconds",
+    "option C":"1 hours 50 minutes",
+    "option D":"0 hours 0 minutes 3650 seconds"
+  },
+  {
+    "No":"106",
+    "unit_number":"2",
+    "question_text":"What will be output of following code?\nA=0\nfor i in range(4):\n    if i%2==0:\n        pass\n    else:\n        continue\n        break\n    A+=1\nprint(A)",
+    "MCQ Answer":"C",
+    "option A":"4",
+    "option B":"3",
+    "option C":"2",
+    "option D":"0"
+  },
+  {
+    "No":"107",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following code snippet?\ncount = 0\nwhile(True):\n   if count % 3 == 0:\n       print(count, end = \" \")\n   if(count > 15):\n       break;\n   count += 1",
+    "MCQ Answer":"A",
+    "option A":"0 3 6 9 12 15  ",
+    "option B":"0 1 2 3 ",
+    "option C":"0 3 6 9 ",
+    "option D":"0 3 6 9 12 "
+  },
+  {
+    "No":"108",
+    "unit_number":"2",
+    "question_text":"What is the output of the following code?\na = True\nb = False\nc = True\n\nif not a or b:\n    print (\"a\")\nelif not a or not b and c:\n    print (\"b\")\nelif not a or b or not b and a:\n    print (\"c\")\nelse:\n    print (\"d\")",
+    "MCQ Answer":"B",
+    "option A":"a",
+    "option B":"b",
+    "option C":"c",
+    "option D":"d"
+  },
+  {
+    "No":"109",
+    "unit_number":"2",
+    "question_text":"What does the following code print?\nif 5 + 5 == 10:\n      print(\"TRUE\")\nelse:\n      print(\"FALSE\")\nprint(\"TRUE\")",
+    "MCQ Answer":"D",
+    "option A":"TRUE ",
+    "option B":"FALSE    ",
+    "option C":"TRUE\nFALSE",
+    "option D":"TRUE\nTRUE"
+  },
+  {
+    "No":"110",
+    "unit_number":"2",
+    "question_text":"What is the output of the following nested loop\nfor num in range(26, 30):\n      for i in range(2, num):\n            if num%i == 1:\n                print(num, end=’,’)\n                break",
+    "MCQ Answer":"C",
+    "option A":"26,27,28",
+    "option B":"26,27,28,29",
+    "option C":"26,27,28,29,",
+    "option D":"27,29"
+  },
+  {
+    "No":"111",
+    "unit_number":"2",
+    "question_text":"What is the value of the var after the for loop completes its execution:\nvar = 10\nfor i in range(10):\n    for j in range(2, 10, 1):\n        if var % 2 == 0:\n            var += 1\n            continue\n    var+=1\nelse:\n    var+=1\nprint(var)",
+    "MCQ Answer":"D",
+    "option A":"20",
+    "option B":"21",
+    "option C":"30",
+    "option D":"31"
+  },
+  {
+    "No":"112",
+    "unit_number":"2",
+    "question_text":"What should be the output of the following python code snippet:\na=5\nb=7\nc=2\n\nif a>b:\n    a,b = b,a\nif a>c:\n    a,c = c,a\nif b>c:\n    b,c = c,b\n    \nprint(a,b,c,end=\",\")",
+    "MCQ Answer":"C",
+    "option A":"2,5,7",
+    "option B":"7,5,2",
+    "option C":"2 5 7,",
+    "option D":"7 5 2,"
+  },
+  {
+    "No":"113",
+    "unit_number":"2",
+    "question_text":"What is the value of x after the following nested for loop completes its execution\nx = 0\nfor i in range(1,10):\n    for j in range(-1, -10, -1):\n        x += 1\n        print(x)",
+    "MCQ Answer":"A",
+    "option A":"81",
+    "option B":"90",
+    "option C":"80",
+    "option D":"99"
+  },
+  {
+    "No":"114",
+    "unit_number":"2",
+    "question_text":"What is the value of x\nx = 0\nwhile (x < 100):\n    x+=3\nprint(x)",
+    "MCQ Answer":"D",
+    "option A":"98",
+    "option B":"99",
+    "option C":"100",
+    "option D":"102"
+  },
+  {
+    "No":"115",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following program.\n\nif (9 < 0) and (0 < -9):\n    print(\"hello\")\nelif (9 > 0) or False:\n    print(\"good\")\nelse:\nprint(\"bad\")",
+    "MCQ Answer":"A",
+    "option A":"IndentationError          ",
+    "option B":"hello",
+    "option C":"good",
+    "option D":"bad"
+  },
+  {
+    "No":"116",
+    "unit_number":"2",
+    "question_text":"What is the output of the following code?\nc=1\ns=0\nwhile c<=8:\n    c=c-1\n    s=s+c\n    c=c+2\nprint(s)",
+    "MCQ Answer":"A",
+    "option A":"28",
+    "option B":"30",
+    "option C":"21",
+    "option D":"35"
+  },
+  {
+    "No":"117",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following program on execution?\nx=0\nwhile x<10:\n    if x%3==0:\n        x+=5\n        continue\n    if x%2==0:\n        x+=14\n    else:\n        x+=1\nelse:\n    x+=1\nprint(x)",
+    "MCQ Answer":"C",
+    "option A":"10",
+    "option B":"11",
+    "option C":"12",
+    "option D":"0"
+  },
+  {
+    "No":"118",
+    "unit_number":"2",
+    "question_text":"What is the output of the following code?                                                                                                                                              \nval = 154\nwhile(not(val)):\n    val**=2\nelse:\n    val\/\/=2\nprint(val) ",
+    "MCQ Answer":"A",
+    "option A":"77",
+    "option B":"11",
+    "option C":"154",
+    "option D":"11858"
+  },
+  {
+    "No":"119",
+    "unit_number":"2",
+    "question_text":"What is the output of the following code?\nn=10\ni=1\nwhile(i<=n):\n    k=0\n    if(n%i==0):\n        j=1\n        while(j<=i):\n            if(i%j==0):\n                k=k+1\n            j=j+1\n        if(k==2):\n            print(i,end=\" \")\n    i=i+1",
+    "MCQ Answer":"A",
+    "option A":"2        5",
+    "option B":"10",
+    "option C":"100",
+    "option D":"20"
+  },
+  {
+    "No":"120",
+    "unit_number":"2",
+    "question_text":"What will be the output of Python code?\n\ni,j=1,4\nwhile True:\n    if(i%7==0 or j%9==0):\n        break\n    i+=1\n    j+=1\nprint(i,j)    ",
+    "MCQ Answer":"C",
+    "option A":"5 9",
+    "option B":"6 7",
+    "option C":"6 9",
+    "option D":"7 9"
+  },
+  {
+    "No":"121",
+    "unit_number":"2",
+    "question_text":"What will be the output of given Python code?\nn=5\nc=0\nwhile(n):\n    if(n>5):\n        c=c+n-1\n        n=n-1\n    else:\n        c=c+n-1\n        break\nprint(n, c)",
+    "MCQ Answer":"A",
+    "option A":"5 4",
+    "option B":"5 0",
+    "option C":"5 11",
+    "option D":"4 0"
+  },
+  {
+    "No":"122",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following program on execution?\nfor x in range(0,15):\n    if(x%3==0):\n        continue\n    if(x%5==0):\n        continue\n    if(x%7==0):\n        break\n    print(x,end=\" \")",
+    "MCQ Answer":"A",
+    "option A":"1 2 4 ",
+    "option B":"0 1 2 4",
+    "option C":"0 1  2 3 4 5 6",
+    "option D":" 1  2 3 4 5 6"
+  },
+  {
+    "No":"123",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following program on execution?\nfor i in range (1,11):\n    sum=0\n    sum+=i\nprint(sum)",
+    "MCQ Answer":"A",
+    "option A":"10",
+    "option B":"11",
+    "option C":"55",
+    "option D":"0"
+  },
+  {
+    "No":"124",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following program on execution?\nn=6\nfor i in range(4,n,1):\n    if i==5:\n        break\nelse:\n    print(n)",
+    "MCQ Answer":"A",
+    "option A":"no output",
+    "option B":"4",
+    "option C":"5",
+    "option D":"n"
+  },
+  {
+    "No":"125",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following program on execution?\nn=1\nfor i in range(1,n,1):\n    print(\"hello\")\nelse:\n    print(\"hi\")",
+    "MCQ Answer":"A",
+    "option A":"  hi",
+    "option B":" hello",
+    "option C":"  no output",
+    "option D":"value errror"
+  },
+  {
+    "No":"126",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following program on execution?\nfor i in range(1,11):\n    x=0\n    x+=i\n    while(x<15):\n        if i%2==0:\n            x+=1\n        else:\n            x+=2\nprint(x)",
+    "MCQ Answer":"A",
+    "option A":"15",
+    "option B":"17",
+    "option C":"16",
+    "option D":"14"
+  },
+  {
+    "No":"127",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following program on execution?\nx=10\nif x<15:\n    print(\"h\",end=\" \")\nelif x>12:\n    print(\"i\",end=\" \")\nelse:\n    print(\"student\",end=\" \")\nif x<9:\n    print(\"name\",end=\" \")\nelse:\n    print(\"Name\",end=\"\")",
+    "MCQ Answer":"A",
+    "option A":"h Name",
+    "option B":"H name",
+    "option C":"hi ",
+    "option D":"hi name"
+  },
+  {
+    "No":"128",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following program on execution?\nx=0\ncount=0\nwhile x<15:\n    if x%2==0:\n        x+=1\n        continue \n    if x%3==0:\n        x+=1\n        continue\n    if count==5:\n        break\n    count+=1   \nprint(x,count)",
+    "MCQ Answer":"A",
+    "option A":"1 5",
+    "option B":"15 5",
+    "option C":"0 5",
+    "option D":"0 0"
+  },
+  {
+    "No":"129",
+    "unit_number":"2",
+    "question_text":"What will be the output of the following program on execution?\nx=0\ncount=0\nfor x in range(10):\n    while x<15:\n        if x<0:\n            pass\n        elif x%2==0:\n            x+=1\n            continue \n        elif x%3==0:\n            x+=1\n            continue\n        elif count==5:\n            break\n        count+=1   \nprint(x,count)",
+    "MCQ Answer":"A",
+    "option A":"11 5",
+    "option B":"10 5",
+    "option C":"16 5",
+    "option D":"14 5"
+  },
+  {
+    "No":"130",
+    "unit_number":"3",
+    "question_text":"What is the output of the following function call? \ndef fun1(name, age=20):\n    print(name, age)\nfun1('Emma', 25)",
+    "MCQ Answer":"A",
+    "option A":"Emma 25",
+    "option B":"Emma 20",
+    "option C":"Emma, 25",
+    "option D":"Emma, 20"
+  },
+  {
+    "No":"131",
+    "unit_number":"3",
+    "question_text":"What will be the output of the following Python code?\na=10\nb=20\ndef change():\n    global b\n    a=45\n    b=56\nchange()\nprint(a)\nprint(b)",
+    "MCQ Answer":"A",
+    "option A":"10\n56",
+    "option B":"45\n56",
+    "option C":"10\n20",
+    "option D":"Syntax Error"
+  },
+  {
+    "No":"132",
+    "unit_number":"3",
+    "question_text":"What will be the output of the following Python code?\ndef display(b, n):\n    while n > 0:\n        print(b,end=\"\")\n        n=n-1\ndisplay('z',3)",
+    "MCQ Answer":"A",
+    "option A":"zzz",
+    "option B":"zz",
+    "option C":"An exception is executed",
+    "option D":"Infinite Loop"
+  },
+  {
+    "No":"133",
+    "unit_number":"3",
+    "question_text":"What will be the output of the following Python code?\ndef fun(x,y,z):\n    return x + y + z\nprint(fun(2,30,400))",
+    "MCQ Answer":"A",
+    "option A":"432",
+    "option B":"24000",
+    "option C":"430",
+    "option D":"No output"
+  },
+  {
+    "No":"134",
+    "unit_number":"3",
+    "question_text":"What will be the output of the following Python code?\ndef func():\n   global value\n   value = \"Local\"  \nvalue = \"Global\"\nfunc()\nprint(value)",
+    "MCQ Answer":"A",
+    "option A":"Local",
+    "option B":"Global",
+    "option C":null,
+    "option D":"Error"
+  },
+  {
+    "No":"135",
+    "unit_number":"3",
+    "question_text":"What will be the output of the following Python code?\ndef say(message, times = 1):\n    print(message * times)\nsay('Hello')\nsay('World', 5)",
+    "MCQ Answer":"A",
+    "option A":"Hello\nWorldWorldWorldWorldWorld",
+    "option B":"Hello\nWorld 5",
+    "option C":"Hello\nWorld,World,World,World,World",
+    "option D":"Hello\nHelloHelloHelloHelloHello"
+  },
+  {
+    "No":"136",
+    "unit_number":"3",
+    "question_text":"What will be the output of the following Python code?\ndef sub(a,b):\n    print(a-b) \nsub(100,200) \nsub(200,100) ",
+    "MCQ Answer":"A",
+    "option A":"-100\n100",
+    "option B":"100\n100",
+    "option C":"100\n-100",
+    "option D":"-100\n-100"
+  },
+  {
+    "No":"137",
+    "unit_number":"3",
+    "question_text":"What will be the output of the following Python code?\nx = 50\ndef func(x):\n    print('x is', x)\n    x = 2\n    print('Changed local x to', x)\nfunc(x)\nprint('x is now', x)",
+    "MCQ Answer":"A",
+    "option A":"x is 50\nChanged local x to 2\nx is now 50",
+    "option B":"x is 50\nChanged local x to 2\nx is now 2",
+    "option C":"x is 50\nChanged local x to 2\nx is now 100",
+    "option D":"None of the mentioned"
+  },
+  {
+    "No":"138",
+    "unit_number":"3",
+    "question_text":"What will be the output of the following Python code?\ndef C2F(c):\n    return c * 9\/5 + 32\nprint(C2F(100))\nprint(C2F(0))",
+    "MCQ Answer":"B",
+    "option A":"212\n32",
+    "option B":"212.0\n32.0",
+    "option C":"567\n98",
+    "option D":"None of the mentioned"
+  },
+  {
+    "No":"139",
+    "unit_number":"3",
+    "question_text":"What will be the output of the following Python code?\ndef function1(var1=5, var2=7):\n    var2=9\n    var1=3\n    print (var1, \" \", var2)\nfunction1(10,12)",
+    "MCQ Answer":"B",
+    "option A":"5   7",
+    "option B":"3   9",
+    "option C":"10   12",
+    "option D":"Error"
+  },
+  {
+    "No":"140",
+    "unit_number":"3",
+    "question_text":"What will be the output of the following Python code?\ndef maximum(x, y):\n    if x > y:\n        return x\n    elif x == y:\n        return 'The numbers are equal'\n    else:\n        return y\nprint(maximum(2, 3))",
+    "MCQ Answer":"B",
+    "option A":"2",
+    "option B":"3",
+    "option C":"The numbers are equal",
+    "option D":"None of the mentioned"
+  },
+  {
+    "No":"141",
+    "unit_number":"3",
+    "question_text":"What will be the output of the following Python code?\ndef power(x, y=2):\n    r = 1\n    for i in range(y):\n       r = r * x\n    return r\nprint(power(3))\nprint(power(3,3))",
+    "MCQ Answer":"B",
+    "option A":"212\n32",
+    "option B":"9\n27",
+    "option C":"567\n98",
+    "option D":"None of the mentioned"
+  },
+  {
+    "No":"142",
+    "unit_number":"3",
+    "question_text":"What will be the output of the following Python code?\nx = 50\ndef func():\n    global x\n    print('x is', x)\n    x = 2\n    print('Changed global x to', x)\nfunc()\nprint('Value of x is', x)",
+    "MCQ Answer":"B",
+    "option A":"x is 50\nChanged global x to 2\nValue of x is 50",
+    "option B":"x is 50\nChanged global x to 2\nValue of x is 2",
+    "option C":"x is 50\nChanged global x to 50\nValue of x is 50",
+    "option D":"None of the mentioned"
+  },
+  {
+    "No":"143",
+    "unit_number":"3",
+    "question_text":"What is the output of the add() function call? \ndef add(a, b):\n    return a+5, b+5\nresult = add(3, 2)\nprint(result)",
+    "MCQ Answer":"C",
+    "option A":"15",
+    "option B":"8",
+    "option C":"(8,7)",
+    "option D":"Syntax Error"
+  },
+  {
+    "No":"144",
+    "unit_number":"3",
+    "question_text":"What will be the output of the following Python code?\ndef change(i = 1, j = 2):\n    i = i + j\n    j = j + 1\n    print(i, j)\nchange(j = 1, i = 2)",
+    "MCQ Answer":"C",
+    "option A":"1 2",
+    "option B":"3 3",
+    "option C":"3 2",
+    "option D":"An exception is thrown because of conflicting values"
+  },
+  {
+    "No":"145",
+    "unit_number":"3",
+    "question_text":"What will be the output of the following Python code?\ndef cube(x):\n    return x*x*x\nx = cube(3)\nprint(x)",
+    "MCQ Answer":"C",
+    "option A":"9",
+    "option B":"3",
+    "option C":"27",
+    "option D":"30"
+  },
+  {
+    "No":"146",
+    "unit_number":"3",
+    "question_text":"What will be the output of the following Python code?\ndef func(a, b=5, c=10):\n    print('a is', a, 'and b is', b, 'and c is', c)\nfunc(3, 7)\nfunc(25, c = 24)\nfunc(c = 50, a = 100)",
+    "MCQ Answer":"C",
+    "option A":"a is 7 and b is 3 and c is 10\na is 25 and b is 5 and c is 24\na is 5 and b is 100 and c is 50",
+    "option B":"a is 3 and b is 7 and c is 10\na is 5 and b is 25 and c is 24\na is 50 and b is 100 and c is 5",
+    "option C":"a is 3 and b is 7 and c is 10\na is 25 and b is 5 and c is 24\na is 100 and b is 5 and c is 50",
+    "option D":"None of the mentioned"
+  },
+  {
+    "No":"147",
+    "unit_number":"3",
+    "question_text":"What will be the output of the following Python code?\ndef function1(var1,var2=5):\n    var1=2\n    var3=var1*var2\n    return var3\nvar1=3\nprint(function1(var1,var2))",
+    "MCQ Answer":"C",
+    "option A":"10",
+    "option B":"15",
+    "option C":"Error as var2 is not defined while calling the function",
+    "option D":"Does not give any error as var2 is a default argument"
+  },
+  {
+    "No":"148",
+    "unit_number":"3",
+    "question_text":"What will be the output of the following Python code?\ndef printMax(a, b):\n    if a > b:\n        print(a, 'is maximum')\n    elif a == b:\n        print(a, 'is equal to', b)\n    else:\n        print(b, 'is maximum')\nprintMax(3, 4)",
+    "MCQ Answer":"C",
+    "option A":"3",
+    "option B":"4",
+    "option C":"4 is maximum",
+    "option D":"None of the mentioned"
+  },
+  {
+    "No":"149",
+    "unit_number":"3",
+    "question_text":"What will be the output of the following Python code?\ni=0\ndef change(i):\n   i=i+1\n   return i\nchange(1)\nprint(i)",
+    "MCQ Answer":"C",
+    "option A":"1",
+    "option B":"Nothing is displayed",
+    "option C":"0",
+    "option D":"An exception is thrown"
+  },
+  {
+    "No":"150",
+    "unit_number":"3",
+    "question_text":"What is the output of the following function call? \ndef fun1(num):\n    return num + 25\nfun1(5)\nprint(num)",
+    "MCQ Answer":"D",
+    "option A":"25",
+    "option B":"5",
+    "option C":"30",
+    "option D":"NameError"
+  },
+  {
+    "No":"151",
+    "unit_number":"3",
+    "question_text":"What will be the last line of the output of the following Python code if test_fib(6) is called?\ndef fib(x):\n    global num_fib_calls\n    num_fib_calls += 1\n    if x == 0 or x == 1:\n        return 1\n    else:\n        return fib(x-1) + fib(x-2)\n\ndef test_fib(n):\n    for i in range(n+1):\n        global num_fib_calls\n        num_fib_calls = 0\n        print('fib of', i, '=', fib(i))\n        print('fib called', num_fib_calls, 'times.')",
+    "MCQ Answer":"D",
+    "option A":"fib called 5 times",
+    "option B":"fib called 10 times",
+    "option C":"fib called 20 times",
+    "option D":"fib called 25 times"
+  },
+  {
+    "No":"152",
+    "unit_number":"3",
+    "question_text":"What will be the output of the following Python code?\ndef f(p, q, r):\n    global s\n    p = 10\n    q = 20\n    r = 30\n    s = 40\n    print(p,q,r,s)\np,q,r,s = 1,2,3,4\nf(5,10,15)",
+    "MCQ Answer":"A",
+    "option A":"10 20 30 40",
+    "option B":"10 20 30 4",
+    "option C":"1 2 3 40",
+    "option D":"1 2 3 4"
+  },
+  {
+    "No":"153",
+    "unit_number":"3",
+    "question_text":"If number of arguments in function definition and function call does not match, then which type of error is returned?",
+    "MCQ Answer":"D",
+    "option A":"NameError",
+    "option B":"ImportError",
+    "option C":"funError ",
+    "option D":"TypeError"
+  },
+  {
+    "No":"154",
+    "unit_number":"3",
+    "question_text":"What will be the output of the following Python code?\ndef power(x, y=3):\n    r = 1\n    for i in range(y):\n        r = r * x\n    return r\nprint(power(3),end=\" \")\nprint(power(3,3))",
+    "MCQ Answer":"C",
+    "option A":"3 3",
+    "option B":"9 9",
+    "option C":"27 27",
+    "option D":"9 27"
+  },
+  {
+    "No":"155",
+    "unit_number":"3",
+    "question_text":"What will be the output of the following Python code?\ndef function1(var1=7,var2=5):\n    var1=2\n    var3=var1*var2\n    return var3\nvar2=6\nvar1=3\nprint(function1(var1,var2))",
+    "MCQ Answer":"A",
+    "option A":"12",
+    "option B":"10",
+    "option C":"18",
+    "option D":"25"
+  },
+  {
+    "No":"156",
+    "unit_number":"3",
+    "question_text":"What will be the output of the following Python code?\ndef fun(a=5,b=10,c):\n    print(a**2,b\/\/a,c**1)\nfun(20,c=30)",
+    "MCQ Answer":"D",
+    "option A":"400     1         5",
+    "option B":"25        2        5  ",
+    "option C":"400      2      30 ",
+    "option D":"Error"
+  },
+  {
+    "No":"157",
+    "unit_number":"3",
+    "question_text":"What will be the output of the following python code?\ncar=20\nbike=10\ncycle=30\ndef new_Pur():\n    global bike,cycle\n    car=30\n    bike=20\n    cycle=50\nnew_Pur()\nprint(car+10,\" \",bike+5,\" \",cycle+5)\n",
+    "MCQ Answer":"B",
+    "option A":"30  15  35",
+    "option B":"30  25  55",
+    "option C":"30  25  35",
+    "option D":"20  25  55"
+  },
+  {
+    "No":"158",
+    "unit_number":"3",
+    "question_text":"What will be the output of the following Python code?\ndef f():\n    print(x,end=\" \")\n    return y\ndef f():\n    print(y,end=\" \")\n    return \nx=5\ny=4\nprint(f())",
+    "MCQ Answer":"A",
+    "option A":"4 None  ",
+    "option B":"5 4",
+    "option C":"4 5",
+    "option D":"5"
+  },
+  {
+    "No":"159",
+    "unit_number":"4",
+    "question_text":"What arithmetic operators cannot be used with strings?",
+    "MCQ Answer":"A",
+    "option A":"-",
+    "option B":"+",
+    "option C":"*",
+    "option D":"All of the mentioned"
+  },
+  {
+    "No":"160",
+    "unit_number":"4",
+    "question_text":" Name the function which is used to find length of string.",
+    "MCQ Answer":"B",
+    "option A":" length( )",
+    "option B":"len( )",
+    "option C":"slen( )",
+    "option D":"strlen( )"
+  },
+  {
+    "No":"161",
+    "unit_number":"4",
+    "question_text":"What will be the output of above Python code?                                                        \n str1=\"6\/4\"\nprint(\"str1\")",
+    "MCQ Answer":"C",
+    "option A":"1",
+    "option B":"6\/4",
+    "option C":"str1",
+    "option D":"1.5"
+  },
+  {
+    "No":"162",
+    "unit_number":"4",
+    "question_text":"What will be the output of below Python code?\nstr1=\"Programming\"\nprint(str1[3:8])",
+    "MCQ Answer":"B",
+    "option A":"ogram",
+    "option B":"gramm",
+    "option C":"rammin",
+    "option D":"ogramming"
+  },
+  {
+    "No":"163",
+    "unit_number":"4",
+    "question_text":"What will the below Python code will return? \nstr1=\"save paper,save trees\"\nstr1.find(\"save\")",
+    "MCQ Answer":"B",
+    "option A":"It returns the first index position of the last occurance of \"save\" in the given string str1.",
+    "option B":"It returns the first index position of the first occurance of \"save\" in the given string str1.",
+    "option C":"It returns the last index position of the last occurance of \"save\" in the given string str1.",
+    "option D":"It returns the last index position of the first occurance of \"save\" in the given string str1."
+  },
+  {
+    "No":"164",
+    "unit_number":"4",
+    "question_text":"Which of the following will give \"Aryan\" as output?\nstr1=\"Vishv,Aryan,Devarsh\"",
+    "MCQ Answer":"D",
+    "option A":"print(str1[-9:-12])",
+    "option B":"print(str1[-12:-7])",
+    "option C":"print(str1[-13:-6])",
+    "option D":"print(str1[-13:-8])"
+  },
+  {
+    "No":"165",
+    "unit_number":"4",
+    "question_text":"What will following Python code return?\nstr1=\"LJ University\"\nprint(len(str1))",
+    "MCQ Answer":"A",
+    "option A":"13",
+    "option B":"12",
+    "option C":"11",
+    "option D":"14"
+  },
+  {
+    "No":"166",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following Python statement?\n\"abcdef\"[2:8]",
+    "MCQ Answer":"B",
+    "option A":"cde",
+    "option B":"cdef",
+    "option C":"bcdef",
+    "option D":"def"
+  },
+  {
+    "No":"167",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following Python statement?\nprint('new'  'line')",
+    "MCQ Answer":"D",
+    "option A":"Error",
+    "option B":"Output equivalent to print ‘new\\nline’",
+    "option C":"new line",
+    "option D":"newline"
+  },
+  {
+    "No":"168",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following Python code?\nstr1=\"hello world\"\nstr1[::-1]\n",
+    "MCQ Answer":"C",
+    "option A":"hello",
+    "option B":"world",
+    "option C":"dlrow olleh",
+    "option D":"hello world"
+  },
+  {
+    "No":"169",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following Python code?\n\nx = ['ab', 'cd']\nfor i in x:\n    i.upper()\nprint(x)",
+    "MCQ Answer":"A",
+    "option A":"[‘ab’, ‘cd’]",
+    "option B":"[‘AB’, ‘CD’]",
+    "option C":"[None, None]",
+    "option D":"none of the mentioned"
+  },
+  {
+    "No":"170",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following Python code?\n\nx = 'abcd'\nfor i in range(len(x)):\n    i.upper()\nprint (x)",
+    "MCQ Answer":"C",
+    "option A":"a b c d",
+    "option B":"0 1 2 3",
+    "option C":"error",
+    "option D":"None of mentioned "
+  },
+  {
+    "No":"171",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following Python code?\nprint('abcd1234'.isalnum())",
+    "MCQ Answer":"A",
+    "option A":"True",
+    "option B":"False",
+    "option C":null,
+    "option D":"Error"
+  },
+  {
+    "No":"172",
+    "unit_number":"4",
+    "question_text":"Select the correct output of the following String operations.\nstr1 = \"my isname isisis jameis isis bond\"\nsub = \"is\"\nprint(str1.count(sub, 5))",
+    "MCQ Answer":"C",
+    "option A":"5",
+    "option B":"7",
+    "option C":"6",
+    "option D":"4"
+  },
+  {
+    "No":"173",
+    "unit_number":"4",
+    "question_text":"What is the output of the following string comparison.\nprint(\"John\" > \"Jhon\")\nprint(\"Emma\" < \"Emm\")",
+    "MCQ Answer":"B",
+    "option A":"True\nTrue",
+    "option B":"True\nFalse",
+    "option C":"False\nTrue",
+    "option D":"False\nFalse"
+  },
+  {
+    "No":"174",
+    "unit_number":"4",
+    "question_text":" Select the correct output of the following String operations.\nstr1 = 'Welcome'\nprint (str1[:6] + 'LJIET')",
+    "MCQ Answer":"D",
+    "option A":"WelcoLJIET",
+    "option B":"Welcome  LJIET",
+    "option C":"WelcomeLJIET",
+    "option D":"WelcomLJIET"
+  },
+  {
+    "No":"175",
+    "unit_number":"4",
+    "question_text":"Guess the correct output of the following code?\nstr1 = \"LJIET\"\nprint(str1[1:4], str1[:5], str1[4:], str1[0:-1], str1[:-1])",
+    "MCQ Answer":"A",
+    "option A":"JIE LJIET T LJIE LJIE",
+    "option B":"JIE LJIET T LJI LJI",
+    "option C":"JIE LJIET T LJIET LJIET",
+    "option D":"JIE LJIET T LJIE LJI"
+  },
+  {
+    "No":"176",
+    "unit_number":"4",
+    "question_text":"Which of the following is a Python tuple?",
+    "MCQ Answer":"B",
+    "option A":"[1, 2, 3]",
+    "option B":"(1, 2, 3)",
+    "option C":"{1, 2, 3}",
+    "option D":"{}"
+  },
+  {
+    "No":"177",
+    "unit_number":"4",
+    "question_text":"Which of the following creates a tuple?",
+    "MCQ Answer":"B",
+    "option A":"tuple1=(5)*2",
+    "option B":"tuple1=(\"a\",\"b\")",
+    "option C":"tuple1[2]=(\"a\",\"b\")",
+    "option D":"None of the above"
+  },
+  {
+    "No":"178",
+    "unit_number":"4",
+    "question_text":"What type will be printed when the following code executes?\naTuple = (\"Orange\")\nprint (type(aTuple))",
+    "MCQ Answer":"D",
+    "option A":"list",
+    "option B":"tuple",
+    "option C":"array",
+    "option D":"str"
+  },
+  {
+    "No":"179",
+    "unit_number":"4",
+    "question_text":"What will the following code return?\ndef practice(tup):\n    a, b, c = tup\n    return b\naTuple = \"Orange\", 30, \"White\"\npractice(aTuple)",
+    "MCQ Answer":"B",
+    "option A":"Orange",
+    "option B":"30",
+    "option C":"White",
+    "option D":"(\"Orange\", 30, \"White\")"
+  },
+  {
+    "No":"180",
+    "unit_number":"4",
+    "question_text":"Suppose t = (1, 2, 4, 3), which of the following is incorrect?",
+    "MCQ Answer":"B",
+    "option A":"print(t[3])",
+    "option B":"t[3] = 45",
+    "option C":"print(max(t))",
+    "option D":"print(len(t))"
+  },
+  {
+    "No":"181",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following Python code?\nt=(1,2,4,3)\nt[1:3]",
+    "MCQ Answer":"C",
+    "option A":"(1, 2)",
+    "option B":"(1, 2, 4)",
+    "option C":"(2, 4)",
+    "option D":"(2, 4, 3)"
+  },
+  {
+    "No":"182",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following Python code?\nt=(1,2,4,3)\nt[1:-1]",
+    "MCQ Answer":"C",
+    "option A":"(1, 2)",
+    "option B":"(1, 2, 4)",
+    "option C":"(2, 4)",
+    "option D":"(2, 4, 3)"
+  },
+  {
+    "No":"183",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following Python code?\nt1 = (1, 2, 4, 3)\nt2 = (1, 2, 3, 4)\nt1 < t2",
+    "MCQ Answer":"B",
+    "option A":"True",
+    "option B":"False",
+    "option C":"Error",
+    "option D":null
+  },
+  {
+    "No":"184",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following Python code?\nmy_tuple = (1, 2, 3, 4)\nmy_tuple.append( (1,2,3) )\nprint len(my_tuple)",
+    "MCQ Answer":"D",
+    "option A":"1",
+    "option B":"2",
+    "option C":"5",
+    "option D":"Error"
+  },
+  {
+    "No":"185",
+    "unit_number":"4",
+    "question_text":"What is the data type of (1)?",
+    "MCQ Answer":"B",
+    "option A":"Tuple",
+    "option B":"Integer",
+    "option C":"List",
+    "option D":"Both tuple and integer"
+  },
+  {
+    "No":"186",
+    "unit_number":"4",
+    "question_text":"If a=(1,2,3,4), a[1:-1] is _________",
+    "MCQ Answer":"D",
+    "option A":"Error, tuple slicing doesn’t exist",
+    "option B":"[2,3]",
+    "option C":"(2,3,4)",
+    "option D":"(2,3)"
+  },
+  {
+    "No":"187",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following Python code?\n a=(1,2,(4,5))\n b=(1,2,(3,4))\n a<b",
+    "MCQ Answer":"A",
+    "option A":"False",
+    "option B":"True",
+    "option C":"Error, < operator is not valid for tuples",
+    "option D":"Error, < operator is valid for tuples but not if there are sub-tuples"
+  },
+  {
+    "No":"188",
+    "unit_number":"4",
+    "question_text":"Is the following Python code valid?\n a=(1,2,3,4)\n del a",
+    "MCQ Answer":"C",
+    "option A":"No because tuple is immutable",
+    "option B":"Yes, first element in the tuple is deleted",
+    "option C":"Yes, the entire tuple is deleted",
+    "option D":"No, invalid syntax for del method"
+  },
+  {
+    "No":"189",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following Python code?\n a=(0,1,2,3,4)\n b=slice(0,2)\n a[b]",
+    "MCQ Answer":"C",
+    "option A":"Invalid syntax for slicing",
+    "option B":"[0,2]",
+    "option C":"(0,1)",
+    "option D":"(0,2)"
+  },
+  {
+    "No":"190",
+    "unit_number":"4",
+    "question_text":"Choose the correct option for Tuple.",
+    "MCQ Answer":"C",
+    "option A":"In Python, a tuple can contain only integers as its elements.",
+    "option B":"In Python, a tuple can contain only strings as its elements.",
+    "option C":"In Python, a tuple can contain both integers and strings as its elements.",
+    "option D":"In Python, a tuple can contain either string or integer but not both at a time."
+  },
+  {
+    "No":"191",
+    "unit_number":"4",
+    "question_text":"What will be the output of below Python code?\ntupl=(\"annie\",\"hena\",\"sid\")\nprint(tupl[-3:0])",
+    "MCQ Answer":"B",
+    "option A":"(\"annie\")",
+    "option B":"()",
+    "option C":null,
+    "option D":"Error as slicing is not possible in tuple."
+  },
+  {
+    "No":"192",
+    "unit_number":"4",
+    "question_text":"Which of the following options will not result in an error when performed on tuples in Python where tupl=(5,2,7,0,3)?",
+    "MCQ Answer":"C",
+    "option A":"tupl[1]=2",
+    "option B":"tupl.append(2)",
+    "option C":"tupl1=tupl+tupl",
+    "option D":"tupl.sort()"
+  },
+  {
+    "No":"193",
+    "unit_number":"4",
+    "question_text":"Which of the following options will result in an error when performed on tuples in Python where tupl=(1, 21 , 17, 50, 33)? ",
+    "MCQ Answer":"D",
+    "option A":"tupl.append(2)",
+    "option B":"tupl.pop(1)",
+    "option C":"tupl.remove(21)",
+    "option D":"All of the mentioned"
+  },
+  {
+    "No":"194",
+    "unit_number":"4",
+    "question_text":"What will be the output of below Python code?\ntupl=([2,3],\"abc\",0,9)\ntupl[0][1]=1\nprint(tupl)",
+    "MCQ Answer":"C",
+    "option A":"([2,3],\"abc\",0,9)\n",
+    "option B":"([1,3],\"abc\",0,9)\n",
+    "option C":"([2,1],\"abc\",0,9)\n",
+    "option D":"Error"
+  },
+  {
+    "No":"195",
+    "unit_number":"4",
+    "question_text":"Which of the following two Python codes will give same output?\n(i) print(tupl[:-1])\n(ii) print(tupl[0:5])\n(iii) print(tupl[0:4])\n(iv) print(tupl[-4:])\nIf tupl=(5,3,1,9,0) ",
+    "MCQ Answer":"D",
+    "option A":"i, ii\n",
+    "option B":"ii, iv\n",
+    "option C":"i, iv\n",
+    "option D":"i, iii"
+  },
+  {
+    "No":"196",
+    "unit_number":"4",
+    "question_text":"Which of the following would complete val = to set val to 20 by slicing aTuple.\naTuple = (\"Orange\", (10, 20, 30), (5, 15, 25))\nval =",
+    "MCQ Answer":"A",
+    "option A":"val = aTuple[1][1]",
+    "option B":" val = aTuple[1:2](1)",
+    "option C":"val = aTuple[2][1]",
+    "option D":" val = aTuple[1:2][1]"
+  },
+  {
+    "No":"197",
+    "unit_number":"4",
+    "question_text":"What is the output of the following.\naTuple = (10, 20, 30, 40, 50, 60, 70, 80)\nprint(aTuple[2:5], aTuple[:4], aTuple[3:])",
+    "MCQ Answer":"C",
+    "option A":"(30, 40, 50) (10, 20, 30, 40) (40, 50, 60, 70)",
+    "option B":"(30, 40, 50) (10, 20, 30) (40, 50, 60)",
+    "option C":"(30, 40, 50) (10, 20, 30, 40) (40, 50, 60, 70, 80)",
+    "option D":"None of the these"
+  },
+  {
+    "No":"198",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following Python code?\nt = (1, 2, 4, 3, 8, 9)\nfor i in range(0, len(t), 2):\n    print(t[i],end=\" \")",
+    "MCQ Answer":"D",
+    "option A":"1 4 9",
+    "option B":"2 3 9",
+    "option C":"1 2 4",
+    "option D":"1 4 8"
+  },
+  {
+    "No":"199",
+    "unit_number":"4",
+    "question_text":"Find the output of the given Python program\nt1 = (1,2)\nt2 = (2,1)\nx = (t1 == t2)\nprint(x)",
+    "MCQ Answer":"A",
+    "option A":"False",
+    "option B":"True",
+    "option C":"Error",
+    "option D":null
+  },
+  {
+    "No":"200",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following python code?\nstr1=\"Hello World! Hello Hello\"\nstr1.count(\"Hello\",12,25)",
+    "MCQ Answer":"B",
+    "option A":"1",
+    "option B":"2",
+    "option C":"3",
+    "option D":"4"
+  },
+  {
+    "No":"201",
+    "unit_number":"4",
+    "question_text":"What is the output of the following code?\na=\"Hello Welcome to the Python\"\nprint(a.find(\"z\"))\nprint(a.index(\"z\"))",
+    "MCQ Answer":"B",
+    "option A":"Value Error\n-1",
+    "option B":"-1\nValue Error",
+    "option C":"1\nSyntax Error",
+    "option D":"Syntax Error\n1"
+  },
+  {
+    "No":"202",
+    "unit_number":"4",
+    "question_text":"S = \"1234567890\"\nS = S[-3] + S[2:4] + S[-2:-5] + S[ : -4:-2] + S[1: :2]\nprint(S[ : : 3] * 2) \n",
+    "MCQ Answer":"A",
+    "option A":"80408040",
+    "option B":"86068606",
+    "option C":"14701470",
+    "option D":null
+  },
+  {
+    "No":"203",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following code?\nt1=(1,2,3,4,5,6,7)\nprint(t1[t1[1]+t1[-4]])",
+    "MCQ Answer":"C",
+    "option A":"1",
+    "option B":"2",
+    "option C":"7",
+    "option D":"4"
+  },
+  {
+    "No":"204",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following piece of code?\ndef check(s):\n    if len(s) <= 1:\n        return True\n    else:\n        return s[0] == s[-1] and check(s[1:-1])\nprint(check('saippuakivkauppias'))",
+    "MCQ Answer":"B",
+    "option A":"True",
+    "option B":"False",
+    "option C":"s",
+    "option D":"k"
+  },
+  {
+    "No":"205",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following Python code?\ns=\"Th*is is$ nothi&&ng b#ut excerc(is)e\"\nchange=str.maketrans(\"(\",\",\",\"@#$%^&*_-)\")\ns.translate(change)\nprint(s)",
+    "MCQ Answer":"A",
+    "option A":"Th*is is$ nothi&&ng b#ut excerc(is)e",
+    "option B":"This is nothing but excerc,ise",
+    "option C":"This is nothing but exercise",
+    "option D":"NameError: name ‘str’ not defined"
+  },
+  {
+    "No":"206",
+    "unit_number":"4",
+    "question_text":"Which of the following will give \"Simon\" as output?\nstr1=\"John,Simon,Aryan\"",
+    "MCQ Answer":"A",
+    "option A":"print(str1[-11:-6])",
+    "option B":"print(str1[-7:-12])",
+    "option C":"print(str1[-11:-7])",
+    "option D":"print(str1[-11:-5])"
+  },
+  {
+    "No":"207",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following program?\ns = \"ball\"\nr = \"\"\nfor i in s:\n    r = i.upper() + r\nprint(r)\n",
+    "MCQ Answer":"D",
+    "option A":"LLB",
+    "option B":"BALL",
+    "option C":"Error",
+    "option D":"LLAB"
+  },
+  {
+    "No":"208",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following program?\n\ns = 'I love my INDIA'\nprint(s[-1]+s[3:4]+s[7:9]+s[-3:-1]+s[-1:-3:-1]+s[5:9]+s[10:] )",
+    "MCQ Answer":"A",
+    "option A":"AomyDIAIe myINDIA",
+    "option B":"AomyDIIe myINDIA",
+    "option C":"AomyDIAIe myINDI",
+    "option D":"AomyDAIe myINDIA"
+  },
+  {
+    "No":"209",
+    "unit_number":"4",
+    "question_text":"When using find(), If str is not present in string then what is returned?",
+    "MCQ Answer":"C",
+    "option A":"0",
+    "option B":"1",
+    "option C":"-1",
+    "option D":"NameError"
+  },
+  {
+    "No":"210",
+    "unit_number":"4",
+    "question_text":"What is the output for following code:\ns=\"blog\"\nfor i in range(-1,-len(s),-1):\n    print(s[i],end=\"$\")",
+    "MCQ Answer":"C",
+    "option A":"g$o$l$b           ",
+    "option B":"g$o$l$b$          ",
+    "option C":"g$o$l$",
+    "option D":"glob"
+  },
+  {
+    "No":"211",
+    "unit_number":"4",
+    "question_text":"What is the output for following code:\nprint(\"A#B#C#D#E\".split(\"#\",2))",
+    "MCQ Answer":"B",
+    "option A":"['A', 'B', 'C', 'D', 'E']",
+    "option B":"['A', 'B', 'C#D#E']   ",
+    "option C":"['A#', 'B#', 'C#', 'D#', 'E']",
+    "option D":"Error"
+  },
+  {
+    "No":"212",
+    "unit_number":"4",
+    "question_text":"What is the output for following code:\nfor i in range (len(\"python\"),12,2):\n    print(\"python\"[i-6],end=\"\")",
+    "MCQ Answer":"B",
+    "option A":"python",
+    "option B":"pto",
+    "option C":"yhn",
+    "option D":"pyth"
+  },
+  {
+    "No":"213",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following Python code?\nx = 'abcd'\nfor i in x:\n    i.isupper()\nprint (x)",
+    "MCQ Answer":"A",
+    "option A":"abcd",
+    "option B":"0 1 2 3                         ",
+    "option C":"ABCD",
+    "option D":"Error"
+  },
+  {
+    "No":"214",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following Python code?\nt=(1,2,4,3,6,8,4)\nt[1:-1:-1]",
+    "MCQ Answer":"C",
+    "option A":"(2,4,3,6,8)                  ",
+    "option B":"(2,1)                  ",
+    "option C":"()",
+    "option D":"(4,8)"
+  },
+  {
+    "No":"215",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following Python code?\n\nmy_tuple = (1, 2, 3, 4)\nmy_tuple.append( (1,2,3) )\nprint (len(my_tuple))",
+    "MCQ Answer":"D",
+    "option A":"4",
+    "option B":"7",
+    "option C":"5",
+    "option D":"Error"
+  },
+  {
+    "No":"216",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following Python code?\n\ndef enc(st):\n    encoded=\"\"\n    c=1\n    ld=st[0]\n    for i in range (1,len(st)):\n        if ld==st[i]:\n            c=c+1\n        else:\n            encoded=encoded+str(c)+ld\n            c=0\n            ld=st[i]\n            c=c+1\n    encoded=encoded+str(c)+ld\n    return encoded\nst=\"AAABBACCAA\"\nprint(enc(st))\n",
+    "MCQ Answer":"B",
+    "option A":"A3B2A1C2A2",
+    "option B":"3A2B1A2C2A",
+    "option C":"10",
+    "option D":"Error"
+  },
+  {
+    "No":"217",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following Python code?\ns=\"aa\"\ns.strip(\"a\")\nprint(s)",
+    "MCQ Answer":"A",
+    "option A":"aa",
+    "option B":"a",
+    "option C":"error",
+    "option D":"True "
+  },
+  {
+    "No":"218",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following Python code?\ns=\"1234ABCvhghbbv\"\nv=s.maketrans(\"abc\",\"vvv\") \nprint(s.translate(v))",
+    "MCQ Answer":"D",
+    "option A":"vvv",
+    "option B":"1234vhghvvv",
+    "option C":"1234vhg",
+    "option D":"1234ABCvhghvvv"
+  },
+  {
+    "No":"219",
+    "unit_number":"4",
+    "question_text":"What is returned by the following function?\nshift=1\nn=12345\ns=str(n)\nx=s[shift:]+s[:shift]\nprint(x)",
+    "MCQ Answer":"B",
+    "option A":"12345",
+    "option B":"23451",
+    "option C":"34512",
+    "option D":"54321"
+  },
+  {
+    "No":"220",
+    "unit_number":"4",
+    "question_text":"What will following Python code return?\nstr1=\"LJ’University\"\nprint(len(str1))",
+    "MCQ Answer":"A",
+    "option A":"13",
+    "option B":"12",
+    "option C":"15",
+    "option D":"2"
+  },
+  {
+    "No":"221",
+    "unit_number":"4",
+    "question_text":"What will be the output of below Python code?\ntupl=() \ntupl1=tupl*2 \nprint(len(tupl1))",
+    "MCQ Answer":"A",
+    "option A":"0",
+    "option B":"2",
+    "option C":"1",
+    "option D":"10"
+  },
+  {
+    "No":"222",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following program on execution?\nA=(5,3,2)\nB=(5,3,2)\nprint(len(A+B*3))",
+    "MCQ Answer":"C",
+    "option A":"6",
+    "option B":"9",
+    "option C":"12",
+    "option D":"3"
+  },
+  {
+    "No":"223",
+    "unit_number":"4",
+    "question_text":"Select the correct output of the following String operations.\nstr1 = \"my isname isisis jameis isis bond\"\nsub = \"is\"\nprint(str1.find(sub,4,11))\n",
+    "MCQ Answer":"D",
+    "option A":"10",
+    "option B":"11",
+    "option C":"1",
+    "option D":"None of the mentioned"
+  },
+  {
+    "No":"224",
+    "unit_number":"4",
+    "question_text":"What will be the output of the following Python code?\nS = \"1234567890\"\nS = S[-3] + S[2:4] + S[-5:-2] + S[-4:-2] + S[1:2]\nprint(S[::3] * 2)   \n",
+    "MCQ Answer":"B",
+    "option A":"8674086740",
+    "option B":"867867",
+    "option C":"860860",
+    "option D":"840840"
+  },
+  {
+    "No":"225",
+    "unit_number":"5",
+    "question_text":"Which of the following commands will create a list?",
+    "MCQ Answer":"D",
+    "option A":"list1 = list()\n",
+    "option B":"list1 = []\n",
+    "option C":"list1 = list([1, 2, 3])\n",
+    "option D":"All of the mentioned\n"
+  },
+  {
+    "No":"226",
+    "unit_number":"5",
+    "question_text":"What is the output when we execute list(“hello”)?",
+    "MCQ Answer":"A",
+    "option A":"[‘h’, ‘e’, ‘l’, ‘l’, ‘o’]",
+    "option B":"[‘hello’]",
+    "option C":"[‘llo’]",
+    "option D":"[‘olleh’]"
+  },
+  {
+    "No":"227",
+    "unit_number":"5",
+    "question_text":"Suppose listExample is [‘h’,’e’,’l’,’l’,’o’], what is len(listExample)?",
+    "MCQ Answer":"A",
+    "option A":"5",
+    "option B":"4",
+    "option C":null,
+    "option D":"Error"
+  },
+  {
+    "No":"228",
+    "unit_number":"5",
+    "question_text":"Suppose list1 is [1, 3, 2], What is list1 * 2?",
+    "MCQ Answer":"C",
+    "option A":"[2, 6, 4]",
+    "option B":"[1, 3, 2, 1, 3]",
+    "option C":"[1, 3, 2, 1, 3, 2]",
+    "option D":"[1, 3, 2, 3, 2, 1]"
+  },
+  {
+    "No":"229",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nnames1 = ['Amir', 'Bala', 'Chales']\nif 'amir' in names1:\n    print(1)\nelse:\n    print(2)",
+    "MCQ Answer":"C",
+    "option A":"1",
+    "option B":"Error",
+    "option C":"2",
+    "option D":"None of the mentioned"
+  },
+  {
+    "No":"230",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nlist1 = [1, 2, 3, 4]\nlist2 = [5, 6, 7, 8]\nprint(len(list1 + list2))",
+    "MCQ Answer":"D",
+    "option A":"2",
+    "option B":"4",
+    "option C":"5",
+    "option D":"8"
+  },
+  {
+    "No":"231",
+    "unit_number":"5",
+    "question_text":"Which of the following would give an error?",
+    "MCQ Answer":"D",
+    "option A":". list1=[]",
+    "option B":"list1=[]*3",
+    "option C":"list1=[2,8,7]",
+    "option D":"None of the above"
+  },
+  {
+    "No":"232",
+    "unit_number":"5",
+    "question_text":"Suppose list1 is [4, 2, 2, 4, 5, 2, 1, 0], Which of the following is correct syntax for slicing operation?",
+    "MCQ Answer":"D",
+    "option A":"print(list1[0])",
+    "option B":"print(list1[:2])",
+    "option C":"print(list1[:-2])",
+    "option D":"All of the mentioned"
+  },
+  {
+    "No":"233",
+    "unit_number":"5",
+    "question_text":"Suppose list1 is [2, 33, 222, 14, 25], What is list1[-1]?",
+    "MCQ Answer":"C",
+    "option A":"Error",
+    "option B":null,
+    "option C":"25",
+    "option D":"2"
+  },
+  {
+    "No":"234",
+    "unit_number":"5",
+    "question_text":"Suppose list1 is [2, 33, 222, 14, 25], What is list1[:-1]?",
+    "MCQ Answer":"A",
+    "option A":"[2, 33, 222, 14]",
+    "option B":"Error",
+    "option C":"25",
+    "option D":"[25, 14, 222, 33, 2]"
+  },
+  {
+    "No":"235",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nnames = ['Amir', 'Bear', 'Charlton', 'Daman']\nprint(names[-1][-1])",
+    "MCQ Answer":"D",
+    "option A":"A\n",
+    "option B":"Daman",
+    "option C":"Error",
+    "option D":"n"
+  },
+  {
+    "No":"236",
+    "unit_number":"5",
+    "question_text":"Which of the following Python code will give different output from the others?",
+    "MCQ Answer":"C",
+    "option A":"for i in range(0,5):\n    print(i)",
+    "option B":"for j in [0,1,2,3,4]:\n    print(j)",
+    "option C":"for k in [0,1,2,3,4,5]:\n    print(k)",
+    "option D":"for l in range(0,5,1):\n    print(l)"
+  },
+  {
+    "No":"237",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nnames1 = ['Amir', 'Bear', 'Charlton', 'Daman']\nnames2 = names1\nnames3 = names1[:]\nnames2[0] = 'Alice'\nnames3[1] = 'Bob'\nsum = 0\nfor ls in (names1, names2, names3):\n    if ls[0] == 'Alice':\n        sum += 1\n    if ls[1] == 'Bob':\n        sum += 10\nprint(sum)",
+    "MCQ Answer":"B",
+    "option A":"11",
+    "option B":"12",
+    "option C":"21",
+    "option D":"22"
+  },
+  {
+    "No":"238",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nnames1 = ['Amir', 'Bear', 'Charlton', 'Daman']\nnames2 = names1\nnames3 = names1\nnames2[0] = 'Alice'\nnames3[1] = 'Bob'\nsum = 0\nfor ls in (names1, names2, names3):\n    if ls[0] == 'Alice':\n        sum += 1\n    if ls[1] == 'Bob':\n        sum += 10\nprint(sum)\n",
+    "MCQ Answer":"B",
+    "option A":"12",
+    "option B":"33",
+    "option C":"32",
+    "option D":"20"
+  },
+  {
+    "No":"239",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nlst=[3,4,6,1,2]\nlst[1:2]=[7,8]\nprint(lst)",
+    "MCQ Answer":"A",
+    "option A":"[3, 7, 8, 6, 1, 2]",
+    "option B":"Syntax error",
+    "option C":"[3,[7,8],6,1,2]",
+    "option D":"[3,4,6,7,8]"
+  },
+  {
+    "No":"240",
+    "unit_number":"5",
+    "question_text":"What will be the output of below Python code?\nlist1=[8,0,9,5]\nprint(list1[::-1])",
+    "MCQ Answer":"A",
+    "option A":"[5,9,0,8]",
+    "option B":"[8,0,9]",
+    "option C":"[8,0,9,5]",
+    "option D":"[0,9,5]"
+  },
+  {
+    "No":"241",
+    "unit_number":"5",
+    "question_text":"Suppose list1 = [0.5 * x for x in range (0, 4)], list1 is:",
+    "MCQ Answer":"C",
+    "option A":"[0, 1, 2, 3]",
+    "option B":"[0, 1, 2, 3, 4]",
+    "option C":"[0.0, 0.5, 1.0, 1.5]",
+    "option D":"[0.0, 0.5, 1.0, 1.5, 2.0]"
+  },
+  {
+    "No":"242",
+    "unit_number":"5",
+    "question_text":"To add a new element to a list we use which command?",
+    "MCQ Answer":"B",
+    "option A":"list1.add(5)",
+    "option B":"list1.append(5)",
+    "option C":"list1.addLast(5)",
+    "option D":"list1.addEnd(5)"
+  },
+  {
+    "No":"243",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nnumbers = [1, 2, 3, 4]\nnumbers.append([5,6,7,8])\nprint(len(numbers))",
+    "MCQ Answer":"B",
+    "option A":"4",
+    "option B":"5",
+    "option C":"8",
+    "option D":"12"
+  },
+  {
+    "No":"244",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\na=[1,2,3]\nb=a.append(4)\nprint(a)\nprint(b)",
+    "MCQ Answer":"B",
+    "option A":"[1,2,3,4]\n[1,2,3,4]",
+    "option B":"[1, 2, 3, 4]\nNone",
+    "option C":"Syntax error",
+    "option D":"[1,2,3]\n[1,2,3,4]"
+  },
+  {
+    "No":"245",
+    "unit_number":"5",
+    "question_text":"What is returned by the following function?\ndef list_transformation():\n    alist = [4, 2, 8, 6, 5]\n    blist = [ ]\n    for item in alist:\n        blist.append(item+5)\n    return blist",
+    "MCQ Answer":"C",
+    "option A":" [4, 2, 8, 6, 5]",
+    "option B":"[4, 2, 8, 6, 5, 5]",
+    "option C":" [9, 7, 13, 11, 10]",
+    "option D":"Error, you cannot concatenate inside an append."
+  },
+  {
+    "No":"246",
+    "unit_number":"5",
+    "question_text":"What will the following code print?\ndef mystery(num_list):\n    out = []\n    for num in num_list:\n        if num > 10:\n            out.append(num)\n    return out\nprint(mystery([5, 10, 15, 20]))",
+    "MCQ Answer":"C",
+    "option A":"[10, 15, 20]",
+    "option B":"[20, 15]",
+    "option C":" [15, 20]",
+    "option D":"[20, 15, 10]"
+  },
+  {
+    "No":"247",
+    "unit_number":"5",
+    "question_text":"Suppose list1 is [3, 4, 5, 20, 5, 25, 1, 3], what is list1.count(5)?",
+    "MCQ Answer":"D",
+    "option A":"0",
+    "option B":"4",
+    "option C":"1",
+    "option D":"2"
+  },
+  {
+    "No":"248",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nx = [1, 2, 3]\ny = [7, 8, 9]\nx.extend(y)\nprint(x)",
+    "MCQ Answer":"A",
+    "option A":"[1, 2, 3, 7, 8, 9]",
+    "option B":"[1, 2, 3, 7, 9]",
+    "option C":"[7, 8, 9]",
+    "option D":"[1, 2, 3]"
+  },
+  {
+    "No":"249",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nx = [1, 2, 3]\ny = \"789\"\nx.extend(y)\nprint(x)",
+    "MCQ Answer":"D",
+    "option A":"[1, 2, 3, 7, 8, 9]",
+    "option B":"[1, 2, 3]",
+    "option C":"['7', '8', '9']",
+    "option D":"[1, 2, 3, '7', '8', '9']"
+  },
+  {
+    "No":"250",
+    "unit_number":"5",
+    "question_text":"What will be the value of ‘result’ in following Python program?\nlist1 = [1,2,3,4]\nlist2 = [2,4,5,6]\nlist3 = [2,6,7,8]\nresult = list()\nresult.extend(i for i in list1 if i not in (list2+list3) and i not in result)\nresult.extend(i for i in list2 if i not in (list1+list3) and i not in result)\nresult.extend(i for i in list3 if i not in (list1+list2) and i not in result)",
+    "MCQ Answer":"A",
+    "option A":"[1, 3, 5, 7, 8]",
+    "option B":"[1, 7, 8]",
+    "option C":"[1, 2, 4, 7, 8]",
+    "option D":"error"
+  },
+  {
+    "No":"251",
+    "unit_number":"5",
+    "question_text":"Suppose list1 is [3, 4, 5, 20, 5], what is list1.index(5)?",
+    "MCQ Answer":"D",
+    "option A":"0",
+    "option B":"1",
+    "option C":"4",
+    "option D":"2"
+  },
+  {
+    "No":"252",
+    "unit_number":"5",
+    "question_text":"To insert 5 to the third position in list1, we use which command?",
+    "MCQ Answer":"B",
+    "option A":"list1.insert(3, 5)",
+    "option B":"list1.insert(2, 5)",
+    "option C":"list1.add(3, 5)",
+    "option D":"list1.append(3, 5)"
+  },
+  {
+    "No":"253",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nveggies = ['carrot', 'broccoli', 'potato', 'asparagus']\nveggies.insert(veggies.index('broccoli'), 'celery')\nprint(veggies)",
+    "MCQ Answer":"A",
+    "option A":"[‘carrot’, ‘celery’, ‘broccoli’, ‘potato’, ‘asparagus’]",
+    "option B":"[‘carrot’, ‘celery’, ‘potato’, ‘asparagus’]",
+    "option C":"[‘carrot’, ‘broccoli’, ‘celery’, ‘potato’, ‘asparagus’]",
+    "option D":"[‘celery’, ‘carrot’, ‘broccoli’, ‘potato’, ‘asparagus’]"
+  },
+  {
+    "No":"254",
+    "unit_number":"5",
+    "question_text":"What will be the result after the execution of above Python code?\nlist1=[3,2,5,7,3,6]\nlist1.pop(3)\nprint(list1)",
+    "MCQ Answer":"A",
+    "option A":"[3,2,5,3,6]",
+    "option B":"[2,5,7,3,6]",
+    "option C":"[2,5,7,6]",
+    "option D":"[3,2,5,7,3,6]"
+  },
+  {
+    "No":"255",
+    "unit_number":"5",
+    "question_text":"To remove string “hello” from list1, we use which command?",
+    "MCQ Answer":"A",
+    "option A":"list1.remove(“hello”)",
+    "option B":"list1.remove(hello)",
+    "option C":"list1.removeAll(“hello”)",
+    "option D":"list1.removeOne(“hello”)"
+  },
+  {
+    "No":"256",
+    "unit_number":"5",
+    "question_text":"Suppose list1 is [3, 4, 5, 20, 5, 25, 1, 3], what is list1 after list1.reverse()?",
+    "MCQ Answer":"D",
+    "option A":"[3, 4, 5, 20, 5, 25, 1, 3]",
+    "option B":"[1, 3, 3, 4, 5, 5, 20, 25]",
+    "option C":"[25, 20, 5, 5, 4, 3, 3, 1]",
+    "option D":"[3, 1, 25, 5, 20, 5, 4, 3]"
+  },
+  {
+    "No":"257",
+    "unit_number":"5",
+    "question_text":"What will be the output of below Python code?\nnumbers = [1, 3, 4, 2]\nnumbers.sort()\nprint(numbers)",
+    "MCQ Answer":"A",
+    "option A":"[1, 2, 3, 4]",
+    "option B":"[1, 3, 4]",
+    "option C":"[1, 2, 3]",
+    "option D":"[2, 3, 4]"
+  },
+  {
+    "No":"258",
+    "unit_number":"5",
+    "question_text":"What will be the output of below Python code?\ndecimalnumber = [2.01, 2.00, 3.67, 3.28, 1.68]\ndecimalnumber.sort()\nprint(decimalnumber)",
+    "MCQ Answer":"D",
+    "option A":"[1.68, 2, 2.01, 3.28, 3.67]",
+    "option B":"[1.68, 2.0, 2.01, 3, 3]",
+    "option C":"[1, 2, 2, 3, 3]",
+    "option D":"[1.68, 2.0, 2.01, 3.28, 3.67]"
+  },
+  {
+    "No":"259",
+    "unit_number":"5",
+    "question_text":"What will be the output of below Python code?\nwords = [\"Geeks\", \"For\", \"Geeks\"]\nwords.sort()\nprint(words)",
+    "MCQ Answer":"C",
+    "option A":"['Geeks','For', 'Geeks']",
+    "option B":"['For', 'Geeks']",
+    "option C":"['For', 'Geeks', 'Geeks']",
+    "option D":"[For, Geeks, Geeks]"
+  },
+  {
+    "No":"260",
+    "unit_number":"5",
+    "question_text":"Tup=[2,3,4,[]]\nTup[-1].extend(range(5,35,5))\nTup[-1].append([10,20])\nTup[-1][-1].append([100,200])\nprint(len(Tup)+len(Tup[3])+len(Tup[-1][-1])+Tup[-1][-2])\n",
+    "MCQ Answer":"B",
+    "option A":"22",
+    "option B":"44",
+    "option C":"61",
+    "option D":"71"
+  },
+  {
+    "No":"261",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code snippet?\nd = {\"john\":40, \"peter\":45}\n\"john\" in d",
+    "MCQ Answer":"A",
+    "option A":"1",
+    "option B":"0",
+    "option C":"NONE",
+    "option D":"ERROR"
+  },
+  {
+    "No":"262",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code snippet?\nd1 = {\"john\":40, \"peter\":45}\nd2 = {\"john\":466, \"peter\":45}\nd1 == d2",
+    "MCQ Answer":"B",
+    "option A":"1",
+    "option B":"0",
+    "option C":"NONE",
+    "option D":"ERROR"
+  },
+  {
+    "No":"263",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code snippet?\nd = {\"john\":40, \"peter\":45}\nd[\"john\"]",
+    "MCQ Answer":"A",
+    "option A":"40",
+    "option B":"45",
+    "option C":"“john”",
+    "option D":"“peter”"
+  },
+  {
+    "No":"264",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\n\nd = {0: 'a', 1: 'b', 2: 'c'}\nfor i in d:\n    print(i)",
+    "MCQ Answer":"A",
+    "option A":"0 \n1 \n2",
+    "option B":"a\nb\nc",
+    "option C":"0 a \n1 b \n2 c",
+    "option D":"none of the mentioned"
+  },
+  {
+    "No":"265",
+    "unit_number":"5",
+    "question_text":"Suppose d = {“john”:40, “peter”:45}. To obtain the number of entries in dictionary which command do we use?",
+    "MCQ Answer":"B",
+    "option A":"d.size()",
+    "option B":"len(d)",
+    "option C":"size(d)",
+    "option D":"d.len()"
+  },
+  {
+    "No":"266",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code snippet?\nd = {\"john\":40, \"peter\":45}\nprint(list(d.keys()))",
+    "MCQ Answer":"A",
+    "option A":"[“john”, “peter”]",
+    "option B":" [“john”:40, “peter”:45]",
+    "option C":"(“john”, “peter”)",
+    "option D":" (“john”:40, “peter”:45)"
+  },
+  {
+    "No":"267",
+    "unit_number":"5",
+    "question_text":"Which of the following is not a declaration of the dictionary?",
+    "MCQ Answer":"C",
+    "option A":"{1: ‘A’, 2: ‘B’}",
+    "option B":"dict([[1,”A”],[2,”B”]])",
+    "option C":"{1,”A”,2”B”}",
+    "option D":"{ }"
+  },
+  {
+    "No":"268",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\n a=dict()\n a[1]",
+    "MCQ Answer":"A",
+    "option A":"An exception is thrown since the dictionary is empty",
+    "option B":"‘ ‘",
+    "option C":"1",
+    "option D":"0"
+  },
+  {
+    "No":"269",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\na={ }\na[2]=1\na[1]=[2,3,4]\nprint(a[1][1])",
+    "MCQ Answer":"B",
+    "option A":"[2,3,4]",
+    "option B":"3",
+    "option C":"2",
+    "option D":"An exception is thrown"
+  },
+  {
+    "No":"270",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code snippet?\nnumbers = {}\nletters = {}\ncomb = {}\nnumbers[1] = 56\nnumbers[3] = 7\nletters[4] = 'B'\ncomb['Numbers'] = numbers\ncomb['Letters'] = letters\nprint(comb)",
+    "MCQ Answer":"D",
+    "option A":"Error, dictionary in a dictionary can’t exist",
+    "option B":"‘Numbers’: {1: 56, 3: 7}",
+    "option C":"{‘Numbers’: {1: 56}, ‘Letters’: {4: ‘B’}}",
+    "option D":"{‘Numbers’: {1: 56, 3: 7}, ‘Letters’: {4: ‘B’}}"
+  },
+  {
+    "No":"271",
+    "unit_number":"5",
+    "question_text":"Which of the following statements create a dictionary?\n",
+    "MCQ Answer":"D",
+    "option A":"d = {}",
+    "option B":"d = {“john”:40, “peter”:45}",
+    "option C":"d = {40:”john”, 45:”peter”}",
+    "option D":"All of the mentioned"
+  },
+  {
+    "No":"272",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\na={1:\"A\",2:\"B\",3:\"C\"}\nfor i in a:\n    print(i,end=\" \")\n",
+    "MCQ Answer":"A",
+    "option A":"1 2 3\n",
+    "option B":" ‘A’ ‘B’ ‘C’\n",
+    "option C":"1 ‘A’ 2 ‘B’ 3 ‘C’\n",
+    "option D":"Error, it should be: for i in a.items():"
+  },
+  {
+    "No":"273",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\ntext = {1: \"geeks\", 2: \"for\"}\ntext.clear()\nprint(text)",
+    "MCQ Answer":"B",
+    "option A":"{1: \"geeks\", 2: \"for\"}",
+    "option B":"{}",
+    "option C":"[1: \"geeks\", 2: \"for\"]",
+    "option D":"[]"
+  },
+  {
+    "No":"274",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\na={1:\"A\",2:\"B\",3:\"C\"}\nb=a.copy()\nb[2]=\"D\"\nprint(a)",
+    "MCQ Answer":"B",
+    "option A":"Error, copy() method doesn’t exist for dictionaries",
+    "option B":"{1: ‘A’, 2: ‘B’, 3: ‘C’}",
+    "option C":"{1: ‘A’, 2: ‘D’, 3: ‘C’}",
+    "option D":"“None” is printed"
+  },
+  {
+    "No":"275",
+    "unit_number":"5",
+    "question_text":"What is the output of the following piece of code?\na={1:\"A\",2:\"B\",3:\"C\"}\nprint(a.get(1,4))",
+    "MCQ Answer":"B",
+    "option A":"1",
+    "option B":"A",
+    "option C":"4",
+    "option D":"Invalid syntax for get method"
+  },
+  {
+    "No":"276",
+    "unit_number":"5",
+    "question_text":"What is the output of the following piece of code?\na={1:\"A\",2:\"B\",3:\"C\"}\nprint(a.get(5,4))",
+    "MCQ Answer":"C",
+    "option A":"A",
+    "option B":"5",
+    "option C":"4",
+    "option D":"Invalid syntax for get method"
+  },
+  {
+    "No":"277",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code snippet?\na={1:\"A\",2:\"B\",3:\"C\"}\nfor i,j in a.items():\n    print(i,j,end=\" \")",
+    "MCQ Answer":"A",
+    "option A":"1 A 2 B 3 C",
+    "option B":"1 2 3",
+    "option C":"A B C",
+    "option D":"1:”A” 2:”B” 3:”C”"
+  },
+  {
+    "No":"278",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\n a={1:\"A\",2:\"B\",3:\"C\"}\n a.items()",
+    "MCQ Answer":"D",
+    "option A":"Syntax error",
+    "option B":"dict_items([(‘A’), (‘B’), (‘C’)])",
+    "option C":"dict_items([(1,2,3)])",
+    "option D":"dict_items([(1, ‘A’), (2, ‘B’), (3, ‘C’)])"
+  },
+  {
+    "No":"279",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nDictionary1 = {'A': 'Geeks', 'B': 'For', 'C': 'Geeks'}\nprint(Dictionary1.keys())\n",
+    "MCQ Answer":"D",
+    "option A":"keys(['A', 'B', 'C'])",
+    "option B":"(['A', 'B', 'C'])",
+    "option C":"dict_keys([A, B, C])",
+    "option D":"dict_keys(['A', 'B', 'C'])"
+  },
+  {
+    "No":"280",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\na={1:\"A\",2:\"B\",3:\"C\"}\nb={4:\"D\",5:\"E\"}\na.update(b)\nprint(a)",
+    "MCQ Answer":"C",
+    "option A":"{1: ‘A’, 2: ‘B’, 3: ‘C’}",
+    "option B":"Method update() doesn’t exist for dictionaries",
+    "option C":"{1: ‘A’, 2: ‘B’, 3: ‘C’, 4: ‘D’, 5: ‘E’}",
+    "option D":"{4: ‘D’, 5: ‘E’}"
+  },
+  {
+    "No":"281",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\ndictionary = {\"raj\": 2, \"striver\": 3, \"vikram\": 4}\nprint(dictionary.values())  ",
+    "MCQ Answer":"C",
+    "option A":"values([2, 3, 4])",
+    "option B":"([2, 3, 4])",
+    "option C":"dict_values([2, 3, 4])",
+    "option D":"dict([2, 3, 4])"
+  },
+  {
+    "No":"282",
+    "unit_number":"5",
+    "question_text":"Which of the following is not the correct syntax for creating a set?",
+    "MCQ Answer":"A",
+    "option A":"set([[1,2],[3,4]])",
+    "option B":"set([1,2,2,3,4])",
+    "option C":"set((1,2,3,4))",
+    "option D":"{1,2,3,4}"
+  },
+  {
+    "No":"283",
+    "unit_number":"5",
+    "question_text":"Which of the following statements is used to create an empty set?",
+    "MCQ Answer":"B",
+    "option A":"{ }\n",
+    "option B":"set()",
+    "option C":"[ ]",
+    "option D":"( )"
+  },
+  {
+    "No":"284",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\n s={5,6}\n s*3",
+    "MCQ Answer":"A",
+    "option A":"Error as unsupported operand type for set data type",
+    "option B":"{5,6,5,6,5,6}",
+    "option C":"{5,6}",
+    "option D":"Error as multiplication creates duplicate elements which isn’t allowed"
+  },
+  {
+    "No":"285",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\n a={4,5,6}\n b={2,8,6}\n a+b",
+    "MCQ Answer":"C",
+    "option A":"{4,5,6,2,8}",
+    "option B":"{4,5,6,2,8,6}",
+    "option C":"Error as unsupported operand type for sets",
+    "option D":"Error as the duplicate item 6 is present in both sets"
+  },
+  {
+    "No":"286",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\n a={4,5,6}\n b={2,8,6}\n a-b",
+    "MCQ Answer":"A",
+    "option A":"{4,5}",
+    "option B":"{6}",
+    "option C":"Error as unsupported operand type for set data type",
+    "option D":"Error as the duplicate item 6 is present in both sets"
+  },
+  {
+    "No":"287",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code, if s1= {1, 2, 3}?\ns1.issubset(s1)",
+    "MCQ Answer":"A",
+    "option A":"1",
+    "option B":"Error",
+    "option C":"No output",
+    "option D":"0"
+  },
+  {
+    "No":"288",
+    "unit_number":"5",
+    "question_text":"If we have two sets, s1 and s2, and we want to check if all the elements of s1 are present in s2 or not, we can use the function:",
+    "MCQ Answer":"B",
+    "option A":"s2.issubset(s1)",
+    "option B":"s2.issuperset(s1)",
+    "option C":"s1.issuperset(s2)",
+    "option D":"s1.isset(s2)"
+  },
+  {
+    "No":"289",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nx = {\"apple\", \"banana\", \"cherry\"}\ny = {\"google\", \"microsoft\", \"apple\"}\nz = x.union(y)\nprint(z)",
+    "MCQ Answer":"C",
+    "option A":"{ 'microsoft', 'google', 'apple', 'cherry'}",
+    "option B":"{'banana', 'microsoft', 'google', 'apple'}",
+    "option C":"{'banana', 'microsoft', 'google', 'apple', 'cherry'}",
+    "option D":"{'banana', 'microsoft', 'google', 'apple'}"
+  },
+  {
+    "No":"290",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\ns1 = {1, 2, 3}\ns2 = {2, 3}\nprint(s1.intersection(s2))",
+    "MCQ Answer":"C",
+    "option A":"{2}",
+    "option B":"{1, 2, 3}",
+    "option C":"{2, 3}",
+    "option D":"{3}"
+  },
+  {
+    "No":"291",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nx = {\"apple\", \"banana\", \"cherry\"}\ny = {\"google\", \"microsoft\", \"apple\"}\nz = x.difference(y)\nprint(z)",
+    "MCQ Answer":"D",
+    "option A":"{\"apple\", \"banana\", \"cherry\"}",
+    "option B":"{\"google\", \"microsoft\", \"apple\"}",
+    "option C":"{\"google\", \"microsoft\",}",
+    "option D":"{'banana', 'cherry'}"
+  },
+  {
+    "No":"292",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nx = {\"apple\", \"banana\", \"cherry\"}\ny = {\"google\", \"microsoft\", \"apple\"}\nz = x.symmetric_difference(y)\nprint(z)",
+    "MCQ Answer":"B",
+    "option A":"{\"apple\", \"banana\", \"cherry\"}",
+    "option B":"{'google', 'banana', 'microsoft', 'cherry'}",
+    "option C":"{\"google\", \"microsoft\",}",
+    "option D":"{'banana', 'cherry'}"
+  },
+  {
+    "No":"293",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nfruits = {\"apple\", \"banana\", \"cherry\"}\nx = fruits.copy()\nprint(x)",
+    "MCQ Answer":"C",
+    "option A":"{'google', 'banana', 'microsoft', 'cherry'}",
+    "option B":"{'banana', 'cherry'}",
+    "option C":"{'banana', 'apple', 'cherry'}",
+    "option D":"{\"google\", \"microsoft\", \"apple\"}"
+  },
+  {
+    "No":"294",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\ns=\"Python Programming\"\nprint(len(set(s)))\n",
+    "MCQ Answer":"C",
+    "option A":"17",
+    "option B":"18",
+    "option C":"12",
+    "option D":"14"
+  },
+  {
+    "No":"295",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\ny = 6\nz = lambda x: x * y\nprint(z(8))",
+    "MCQ Answer":"A",
+    "option A":"48",
+    "option B":"14",
+    "option C":"64",
+    "option D":"None of the mentioned"
+  },
+  {
+    "No":"296",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nlamb = lambda x: x ** 3\nprint(lamb(5))\n",
+    "MCQ Answer":"C",
+    "option A":"15",
+    "option B":"555",
+    "option C":"125",
+    "option D":"None of the mentioned"
+  },
+  {
+    "No":"297",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\ndef writer():\n    title = 'Sir'\n    name = (lambda x: title + ' ' + x)\n    return name\nwho = writer()\nprint(who('Arthur'))",
+    "MCQ Answer":"B",
+    "option A":"Arthur Sir\n",
+    "option B":"Sir Arthur\n",
+    "option C":"Arthur\n",
+    "option D":"None of the mentioned"
+  },
+  {
+    "No":"298",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nmin = (lambda x, y: x if x < y else y)\nprint(min(101*99, 102*98))",
+    "MCQ Answer":"C",
+    "option A":"9997",
+    "option B":"9999",
+    "option C":"9996",
+    "option D":"None of the mentioned"
+  },
+  {
+    "No":"299",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\n\ndef current_date(**kwargs):\n    for i in kwargs:\n        print(i)\ncurrent_date(date=2-1-2023)",
+    "MCQ Answer":"C",
+    "option A":"date:2-1-2023",
+    "option B":"date=2-1-2023          ",
+    "option C":"date",
+    "option D":"44928"
+  },
+  {
+    "No":"300",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\ndef f1(*m):\n   sum1=len(m)\n   for i in m:\n    sum1+=i\n   return sum1 \nx=f1(1,2,3,(4,)==(4,),(5,)==(5))\nprint(x)",
+    "MCQ Answer":"A",
+    "option A":"12",
+    "option B":"11",
+    "option C":"13",
+    "option D":"15"
+  },
+  {
+    "No":"301",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nlamb = lambda x: x ** 3\nprint(lamb(‘5’))\n",
+    "MCQ Answer":"D",
+    "option A":"555",
+    "option B":"15",
+    "option C":"125",
+    "option D":"Error"
+  },
+  {
+    "No":"302",
+    "unit_number":"5",
+    "question_text":"What will be the value of ‘result’ after executing following Python program?\nlist1 = [1,2,3,4]\nlist2 = [2,4,5,6]\nlist3 = [2,6,7,8]\nresult = list()\nresult.extend(i for i in list1 if i in (list2+list3) and i not in result)\nresult.extend(i for i in list2 if i in (list1+list3) and i not in result)\nresult.extend(i for i in list3 if i in (list1+list2) and i not in result)\n",
+    "MCQ Answer":"A",
+    "option A":"[2, 4, 6] ",
+    "option B":"[1, 3, 5, 7, 8]",
+    "option C":"[2, 4, 6, 8]",
+    "option D":"[1, 7, 8]"
+  },
+  {
+    "No":"303",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\ndef F(B,A=3,*C,**D):\n    sum=A+B\n    for i in C:\n        sum=sum+i\n    for i in D.values():    \n        sum=sum+i\n    return sum\nprint(F(1,5,7,4,3,e=1,f=2))",
+    "MCQ Answer":"C",
+    "option A":"10",
+    "option B":"20",
+    "option C":"23",
+    "option D":"21"
+  },
+  {
+    "No":"304",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\n\nnumberGames = {}\nnumberGames[(1,2,4)] = 8\nnumberGames[(4,2,1)] = 10\nnumberGames[(1,2)] = 12\nsum = 0\nfor k in numberGames:\n    sum += numberGames[k]\nprint (len(numberGames) + sum)",
+    "MCQ Answer":"C",
+    "option A":"30",
+    "option B":"24",
+    "option C":"33",
+    "option D":"31"
+  },
+  {
+    "No":"305",
+    "unit_number":"5",
+    "question_text":"What is the output of the following code?\nL=[['Physics',101],['Chemistry',202],['Maths',303],45,6,'j']\nprint(len(L))",
+    "MCQ Answer":"C",
+    "option A":"3",
+    "option B":"5",
+    "option C":"6",
+    "option D":"4"
+  },
+  {
+    "No":"306",
+    "unit_number":"5",
+    "question_text":"What will the below Python code do?\n\nset1={2,3}\n\nset2={3,2}\n\nset3={2,1}\n\nif(set1==set2):\n\n    print(\"yes\")\n\nelse:\n\n    print(\"no\")\n\nif(set1==set3):\n\n    print(\"yes\")\n\nelse:\n\n    print(\"no\")",
+    "MCQ Answer":"A",
+    "option A":"yes\nno",
+    "option B":"no,yes    ",
+    "option C":"no,no    ",
+    "option D":"yes,yes   "
+  },
+  {
+    "No":"307",
+    "unit_number":"5",
+    "question_text":"What is the output of the following code?\nD={1:\"Amit\",2:\"Suman\",3:\"Ravi\",4:\"Anuj\"}\nprint(max(D.values()))",
+    "MCQ Answer":"B",
+    "option A":"Amit",
+    "option B":"Suman",
+    "option C":"Ravi",
+    "option D":"Anuj"
+  },
+  {
+    "No":"308",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nL = ['Arnold', 'Bootboggler', 'Christi', 'Dickinson']\nprint(L[-1][-1])",
+    "MCQ Answer":"A",
+    "option A":"n",
+    "option B":"a",
+    "option C":"Dickinson",
+    "option D":"Arnold"
+  },
+  {
+    "No":"309",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nD = {1 : 1, 2 : '2', '1' : 2, '2' : 3}\nD['1'] = 2\nprint(D [D [D [ str(D[1]) ] ] ] )",
+    "MCQ Answer":"D",
+    "option A":"Key Error",
+    "option B":"1",
+    "option C":"Syntax Error",
+    "option D":"3"
+  },
+  {
+    "No":"310",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nL1 = [ ]\nL1.append([1, [2, 3], 4])\nL1.extend([7, 8, 9])\nprint(L1[0][1][1] + L1[2])",
+    "MCQ Answer":"B",
+    "option A":"12",
+    "option B":"11",
+    "option C":"[11]",
+    "option D":"[12]"
+  },
+  {
+    "No":"311",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nL1 = [1, 1.33, 'LJU', 0, 'N', True, 'Y', 1]\nval1= 0\nval2= \"\"\nfor x in L1:\n    if(type(x) == int or type(x) == float):\n        val1 += x\n    elif(type(x) == str):\n        val2 += x\n    else:\n        break\n        continue\nprint(val1, val2)",
+    "MCQ Answer":"A",
+    "option A":"2.33 LJUN",
+    "option B":"3.33 LJUNTrueY",
+    "option C":"3.33 LJU",
+    "option D":"2.33 LJUNY"
+  },
+  {
+    "No":"312",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\ndef sum_list(l):\n    sum=0\n    for i in range(len(l)):\n        if l[i]==13 or l[i-1]==13:\n                continue\n\n        else:\n            sum+=l[i]\n    return sum   \nl= [1,2,13,2,9,13]\nprint(sum_list(l))",
+    "MCQ Answer":"D",
+    "option A":"40",
+    "option B":"27",
+    "option C":"9",
+    "option D":"11"
+  },
+  {
+    "No":"313",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nL1= [1,1,2,4,5,6,2,3,1,3,5]\nL2= [8,2,1,3,8,3,7,2,0]\nL=L1+L2\nS=list(set(list(L)))\nS.sort()\nS.reverse()\nS.sort()\nL.reverse()\nprint(S)",
+    "MCQ Answer":"A",
+    "option A":"[0, 1, 2, 3, 4, 5, 6, 7, 8]",
+    "option B":"[1, 1, 2, 4, 5, 6, 2, 3, 1, 3, 5, 8, 2, 1, 3, 8, 3, 7, 2, 0]",
+    "option C":"[8, 7, 6, 5, 4, 3, 2, 1, 0]",
+    "option D":"[0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 5, 5, 6, 7, 8, 8]"
+  },
+  {
+    "No":"314",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following program?\ntuple = {}\ntuple[(1,2,4)] = 8\ntuple[(4,2,1)] = 10\ntuple[(1,2)] = 12\n_sum = 0\nfor k in tuple:\n\t          _sum += tuple[k]\nprint(len(tuple) + _sum)",
+    "MCQ Answer":"C",
+    "option A":"22",
+    "option B":"30",
+    "option C":"33",
+    "option D":"31"
+  },
+  {
+    "No":"315",
+    "unit_number":"5",
+    "question_text":"What is the output of the following program?\nL = list('123456')\nL[0] = L[5] = 0\nL[3] = L[-2]\nL[5]=1\nL[-2]=4\nL[2]=L[-1]\nL[4]=L[3]\nL[-1]=L[3]\nprint(L)",
+    "MCQ Answer":"A",
+    "option A":"[0, '2', 1, '5', '5', '5']",
+    "option B":"[0, '2', 1, '5', '5', '1']",
+    "option C":"[1, '2', 1, '5', '5', '5']",
+    "option D":"[0, '2', 4, '5', '5', '5']"
+  },
+  {
+    "No":"316",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nl1 = ['A', 'B', 'C', 'D','E']\nl2 = l1.copy()\nl3 = l1[ : :-1]\nl2[4] = 'G'\nl3[3] = 'H'\nl1[4] = l2[4] \nl1[3] = l3[3]\nsum = 0\nfor i in (l1, l2, l3):\n    if i[4] == 'G':\n        sum += 7\n    if i[3] == 'H':\n        sum += 22\n    if i[2] == 'C' :\n        sum += 30\nprint(sum)",
+    "MCQ Answer":"B",
+    "option A":"150",
+    "option B":"148",
+    "option C":"59",
+    "option D":"118"
+  },
+  {
+    "No":"317",
+    "unit_number":"5",
+    "question_text":"What is the output of following python code – \n\n\ndict = {1: 2, 3:4, 4:11, 5:61, 7:81}\nprint(dict[dict[3]])",
+    "MCQ Answer":"A",
+    "option A":"11",
+    "option B":"12",
+    "option C":"13",
+    "option D":"14"
+  },
+  {
+    "No":"318",
+    "unit_number":"5",
+    "question_text":"What is the output for following code:\nlist1=[1,2,3,4]\nlist2=[5,6,7,8]\nprint(len(list1+list2-list1+list2))",
+    "MCQ Answer":"D",
+    "option A":"4",
+    "option B":"8",
+    "option C":"6",
+    "option D":"TypeError"
+  },
+  {
+    "No":"319",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\ndef writer():\n    title = 'Sir'\n    name = (lambda x: title + ' ' * 2x)\n    return name\nwho = writer()\nprint(who('Arthur'))\n",
+    "MCQ Answer":"A",
+    "option A":"Error",
+    "option B":"Sir Arthur  Sir Arthur        ",
+    "option C":"ArthurSir ",
+    "option D":"ArthurSirArthurSir "
+  },
+  {
+    "No":"320",
+    "unit_number":"5",
+    "question_text":"Following Lambda function series can be used to find __________.\nfrom functools import *\nSeries = lambda n: reduce(lambda x, _: x + [x[-1] + x[-2]], range (n-2) , [0,1])\n",
+    "MCQ Answer":"B",
+    "option A":"sum of first two numbers in a list",
+    "option B":"Fibonacci Series",
+    "option C":"The geometric series                          ",
+    "option D":"Syntax error"
+  },
+  {
+    "No":"321",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nnames1 = ['A', 'B', 'C', 'D']\nnames2 = names1\nnames3 = names1[:]\nnames2[0] = 'Aa'\nnames3[1] = 'BB'\nsum = 0\nfor s in (names1, names2, names3):\n    if s[0] == 'Aa':\n         sum += 2\n    if s[1] == 'BB':\n         sum += 20\nprint(sum)",
+    "MCQ Answer":"A",
+    "option A":"24",
+    "option B":"11",
+    "option C":"12",
+    "option D":"13"
+  },
+  {
+    "No":"322",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nl=[[[\"hello\",\"0hel\"],\"bh\"],\"nm\"]\nprint(l[0])",
+    "MCQ Answer":"B",
+    "option A":"[['hello', '0hel']]",
+    "option B":"[['hello', '0hel'], bh']",
+    "option C":"[['hello’]",
+    "option D":"index error"
+  },
+  {
+    "No":"323",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nnums = [3, 5, 16, 27]\nsome_nums = list(filter(lambda num: 5 <= num < 27, nums))\nprint(some_nums)",
+    "MCQ Answer":"D",
+    "option A":"[5,16,27]",
+    "option B":"[3,5,16]",
+    "option C":"[3,5,27]",
+    "option D":"[5,16]"
+  },
+  {
+    "No":"324",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nx={1,2,3,4,5}\ny={3,4,5,6,7}\nz={1,3,5,7,9}\nprint( (x|y) & (x|z))",
+    "MCQ Answer":"B",
+    "option A":"{1, 2, 3, 4, 5, 6, 7}     ",
+    "option B":"{1, 2, 3, 4, 5, 7}  ",
+    "option C":"{1, 3, 5, 7, 9}        ",
+    "option D":"{1, 2, 3, 5, 6, 7, 9}        "
+  },
+  {
+    "No":"325",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\n\nl=[1,2,3,5,7,8,9,10]\nm=max(l)\nprint(l.index(m))",
+    "MCQ Answer":"A",
+    "option A":"7",
+    "option B":"8",
+    "option C":"10",
+    "option D":"5"
+  },
+  {
+    "No":"326",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nx = ['ab', 'cd'] \nfor i in x:\n       i.upper()\nprint(x)",
+    "MCQ Answer":"A",
+    "option A":"[‘ab’, ‘cd’]   ",
+    "option B":"[‘AB’, ‘CD’]  ",
+    "option C":"[None, None]   ",
+    "option D":" ERROR        "
+  },
+  {
+    "No":"327",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\ndef f(l):\n    l.append([1,2,3])\n    return\nl=[1,2,3] \nprint(l,end=\" \")\nf(l)\nprint(l)",
+    "MCQ Answer":"A",
+    "option A":"[1,2,3] [1,2,3,[1,2,3]]   ",
+    "option B":"[1,3,2] [1,3,2]",
+    "option C":"[1,2,3] [1,2,3,1,2,3]",
+    "option D":"ERROR  "
+  },
+  {
+    "No":"328",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nd={1:\"welcome\",[1]:{1:2}}\nprint(d[[1]])",
+    "MCQ Answer":"A",
+    "option A":"ERROR ",
+    "option B":"1",
+    "option C":"2",
+    "option D":"[1]"
+  },
+  {
+    "No":"329",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nl=[1,2,[[1,2,[1,2],1,2]]]\nprint(l[2][0])",
+    "MCQ Answer":"A",
+    "option A":"[1, 2, [1, 2], 1, 2]",
+    "option B":"[1,2]",
+    "option C":"[1,2,1,2]   ",
+    "option D":"2"
+  },
+  {
+    "No":"330",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nl=[1,\"m\",[\"a\",{1:[1,2,3]}]]\nt={(1,2,3):(5)}\ns=(l[2][1][1],t[(1,2,3)])\nprint(s)",
+    "MCQ Answer":"A",
+    "option A":"([1, 2, 3], 5)",
+    "option B":"a5",
+    "option C":"10",
+    "option D":"7"
+  },
+  {
+    "No":"331",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following Python code?\nl=[1,2,(5)]\nl[2]=7\nprint(l)",
+    "MCQ Answer":"A",
+    "option A":"[1,2,7]  ",
+    "option B":"[1,2,5]   ",
+    "option C":"[1,2,(5)]                ",
+    "option D":"TYPE ERROR   "
+  },
+  {
+    "No":"332",
+    "unit_number":"5",
+    "question_text":"What will be the output of the following program on execution?\ndef f(*l):\n    for i in l[0]:\n        sum=0\n        sum+=i\n    print(sum)\nf([1,2,3]) ",
+    "MCQ Answer":"A",
+    "option A":"3",
+    "option B":"error",
+    "option C":"2",
+    "option D":"6"
+  },
+  {
+    "No":"333",
+    "unit_number":"6",
+    "question_text":"The contents of names.txt is listed here:\nMoana\nCinderella\nTiana\nWhich of the following code blocks will print all of the names in names.txt?\nI. names = open(\"names.txt\", \"r\")\nfor line in names:\n    print(names)\nII. names = open(\"names.txt\", \"r\")\nfor line in names:\n    print(line)\nIII. names = open(\"names.txt\", \"r\")\nfor line in names:\n    print(\"line\")",
+    "MCQ Answer":"B",
+    "option A":"I",
+    "option B":"II",
+    "option C":"III",
+    "option D":"I & III both"
+  },
+  {
+    "No":"334",
+    "unit_number":"6",
+    "question_text":"File is created if does not exist. If the file exists, file is truncated( past data is lost). Both reading and writing operation can take place. What is the text file mode?",
+    "MCQ Answer":"C",
+    "option A":"’r’",
+    "option B":"’w’",
+    "option C":"’w+’",
+    "option D":"’a+’"
+  },
+  {
+    "No":"335",
+    "unit_number":"6",
+    "question_text":"From following which statement reads some bytes from the file and returns it as a string?",
+    "MCQ Answer":"B",
+    "option A":"readlines()",
+    "option B":"read()",
+    "option C":"readline()",
+    "option D":"readpara()"
+  },
+  {
+    "No":"336",
+    "unit_number":"6",
+    "question_text":"From following which statement reads all the lines from the file and returns in the form of list?",
+    "MCQ Answer":"A",
+    "option A":"readlines()",
+    "option B":"read()",
+    "option C":"readline()",
+    "option D":"readpara()"
+  },
+  {
+    "No":"337",
+    "unit_number":"6",
+    "question_text":"From following which statement write a string in file?",
+    "MCQ Answer":"A",
+    "option A":"write()",
+    "option B":"writeline()",
+    "option C":"writelines()",
+    "option D":"writepara()"
+  },
+  {
+    "No":"338",
+    "unit_number":"6",
+    "question_text":"From following which statement writes a list in a file?",
+    "MCQ Answer":"C",
+    "option A":"write()",
+    "option B":"writeline()",
+    "option C":"writelines()",
+    "option D":"writepara()"
+  },
+  {
+    "No":"339",
+    "unit_number":"6",
+    "question_text":"What happens if no arguments are passed to the seek function?",
+    "MCQ Answer":"D",
+    "option A":"file position is set to the start of file",
+    "option B":"file position is set to the end of file",
+    "option C":"file position remains unchanged",
+    "option D":"error"
+  },
+  {
+    "No":"340",
+    "unit_number":"6",
+    "question_text":"To read 5th line from text file, which of the following statement is true?",
+    "MCQ Answer":"B",
+    "option A":"dt=f.readline(4)\nprint(dt[4])",
+    "option B":"dt=f.readlines()\nprint(dt[4])",
+    "option C":"dt=f.read(5)\nprint(dt[3])",
+    "option D":"dt=f.read(4)\nprint(dt[5])"
+  },
+  {
+    "No":"341",
+    "unit_number":"6",
+    "question_text":"What will be the output of the following code snippet?\nwith open(\"hello.txt\", \"w\") as f:\n    f.write(\"Hello World how are you today\")\n    \nwith open('hello.txt', 'r') as f:\n    data = f.readlines()\n    for line in data:\n        words = line.split()\n        print (words)\n    f.close()",
+    "MCQ Answer":"A",
+    "option A":" [‘Hello’, ‘World’, ‘how’, ‘are’, ‘you’,  ‘today’]",
+    "option B":"Hello World how are you today",
+    "option C":"Hello",
+    "option D":"Error"
+  },
+  {
+    "No":"342",
+    "unit_number":"6",
+    "question_text":"What is printed after executing this python code?\nf=open(\"abc.txt\",\"w\")\nx=[1,2,3]\nf.writelines(x)\nf.close()\n",
+    "MCQ Answer":"D",
+    "option A":"“1,2,3”",
+    "option B":"1,2,3",
+    "option C":"1",
+    "option D":"Error"
+  },
+  {
+    "No":"343",
+    "unit_number":"7",
+    "question_text":"To use a module in another module, you must import it using an ________ statement",
+    "MCQ Answer":"A",
+    "option A":"import",
+    "option B":"include",
+    "option C":"A AND B",
+    "option D":"NONE OF THESE"
+  },
+  {
+    "No":"344",
+    "unit_number":"7",
+    "question_text":"Which statement is correct to import all modules from the package",
+    "MCQ Answer":"B",
+    "option A":"from package import all",
+    "option B":"from package import *",
+    "option C":" from package include all",
+    "option D":"from package include *"
+  },
+  {
+    "No":"345",
+    "unit_number":"7",
+    "question_text":"A Python module is a file with the _____ file extension that contains valid Python code.",
+    "MCQ Answer":"D",
+    "option A":" .pym",
+    "option B":".pymodule",
+    "option C":".module",
+    "option D":" .py"
+  },
+  {
+    "No":"346",
+    "unit_number":"7",
+    "question_text":"Which of the following returns a string that represents the present working directory?",
+    "MCQ Answer":"A",
+    "option A":"os.getcwd()",
+    "option B":" os.cwd()",
+    "option C":" os.getpwd()",
+    "option D":" os.pwd()"
+  },
+  {
+    "No":"347",
+    "unit_number":"7",
+    "question_text":" Which of the following can be used to create a directory?",
+    "MCQ Answer":"A",
+    "option A":" os.mkdir()",
+    "option B":"os.creat_dir()",
+    "option C":"os.create_dir()",
+    "option D":"os.make_dir()"
+  },
+  {
+    "No":"348",
+    "unit_number":"7",
+    "question_text":" Which of the following can be used to remove a directory?",
+    "MCQ Answer":"A",
+    "option A":" os.rmdir()",
+    "option B":"os.rem_dir()",
+    "option C":"os.create_dir()",
+    "option D":"os.make_dir()"
+  },
+  {
+    "No":"349",
+    "unit_number":"7",
+    "question_text":" __________is used to get the list of all files and directories in the specified directory.",
+    "MCQ Answer":"C",
+    "option A":" os.rmdir()",
+    "option B":"os.chdir()",
+    "option C":"os.listdir()",
+    "option D":"os.make_dir()"
+  },
+  {
+    "No":"350",
+    "unit_number":"7",
+    "question_text":"_______method in Python used to change the current working directory to specified path",
+    "MCQ Answer":"B",
+    "option A":" os.rmdir()",
+    "option B":"os.chdir()",
+    "option C":"os.listdir()",
+    "option D":"os.make_dir()"
+  },
+  {
+    "No":"351",
+    "unit_number":"7",
+    "question_text":"How do you delete a file?",
+    "MCQ Answer":"C",
+    "option A":"del(fp)",
+    "option B":"fp.delete()",
+    "option C":"os.remove(‘file’)",
+    "option D":"os.delete(‘file’)"
+  },
+  {
+    "No":"352",
+    "unit_number":"7",
+    "question_text":"if mymod.py file has this code                               \nA=100\ndef add(a,b):  \n      print(\"The Sum:\",a+b)                                \ndef product(a,b):   \n      print(\"The Product:\",a*b) \nand if we import that module as follow then what will be output?                                  \nfrom mymod import *   \nprint(X)   \nadd(10,20)   \nproduct(10,20)",
+    "MCQ Answer":"C",
+    "option A":"888\nThe Sum: 30",
+    "option B":" 888  \n The Sum: 30   \n The Product: 200 ",
+    "option C":"error",
+    "option D":"none"
+  },
+  {
+    "No":"353",
+    "unit_number":"7",
+    "question_text":"#mod1.py\ndef change(a):\n   b=[x*2 for x in a]\n   print(b)\n\n#mod2.py\ndef change(a):\n   b=[x*x for x in a]\n   print(b)\n\nfrom mod1 import change\nfrom mod2 import change\n#main\ns=[1,2,3]\nchange(s)",
+    "MCQ Answer":"C",
+    "option A":"[2,4,6]",
+    "option B":"[2,4,6] [1,4,9]",
+    "option C":"[1, 4, 9]",
+    "option D":" [1, 2, 3]"
+  },
+  {
+    "No":"354",
+    "unit_number":"7",
+    "question_text":"if calc.py file has this code                               \ndef sum(a,b):\n    print(a+b)\ndef sub(a,b):\n    print(a-b)  \ndef mul(a,b):\n    print(a*b)\ndef div(a,b):\n    print(a\/b)\ndef power(a,b):\n    print(a**b)\nand if we import that module as follow then what will be output?                                  \nimport calc\ncalc.power(5,3)\ncalc.sum(5,7)\n",
+    "MCQ Answer":"C",
+    "option A":"15\n  12\n",
+    "option B":"243\n    12\n",
+    "option C":"125    \n12\n",
+    "option D":"Error"
+  },
+  
+  {
+    "No":"359",
+    "unit_number":"8",
+    "question_text":"Which is not a feature of OOP in general definitions?",
+    "MCQ Answer":"D",
+    "option A":"Efficient Code",
+    "option B":"Code reusability",
+    "option C":"Modularity",
+    "option D":"Duplicate data"
+  },
+  {
+    "No":"360",
+    "unit_number":"8",
+    "question_text":"_____ represents an entity in the real world with its identity and behaviour.",
+    "MCQ Answer":"B",
+    "option A":"A method",
+    "option B":"An object",
+    "option C":"A class",
+    "option D":"An operator"
+  },
+  {
+    "No":"361",
+    "unit_number":"8",
+    "question_text":"What will be the output of the following Python code?\nclass test:\n     def __init__(self,a=\"Hello World\"):\n         self.a=a\n \n     def display(self):\n         print(self.a)\nobj=test()\nobj.display()",
+    "MCQ Answer":"C",
+    "option A":"The program has an error because constructor can’t have default arguments",
+    "option B":"Nothing is displayed",
+    "option C":"“Hello World” is displayed",
+    "option D":"The program has an error display function doesn’t have parameters"
+  },
+  {
+    "No":"362",
+    "unit_number":"8",
+    "question_text":"What will be the output of the following Python code?\nclass test:\n     def __init__(self,a):\n         self.a=a\n \n     def display(self):\n         print(self.a)\nobj=test()\nobj.display()",
+    "MCQ Answer":"C",
+    "option A":"Runs normally, doesn’t display anything",
+    "option B":"Displays 0, which is the automatic default value",
+    "option C":"Error as one argument is required while creating the object",
+    "option D":"Error as display function requires additional argument"
+  },
+  {
+    "No":"363",
+    "unit_number":"8",
+    "question_text":"What is Instantiation in terms of OOP terminology?",
+    "MCQ Answer":"D",
+    "option A":"Deleting an instance of class",
+    "option B":"Modifying an instance of class",
+    "option C":"Copying an instance of class",
+    "option D":"Creating an instance of class"
+  },
+  {
+    "No":"364",
+    "unit_number":"8",
+    "question_text":"Which of the following Python code creates an empty class?",
+    "MCQ Answer":"B",
+    "option A":"class A:\n    return",
+    "option B":"class A:\n    pass",
+    "option C":"class A:",
+    "option D":"It is not possible to create an empty class"
+  },
+  {
+    "No":"365",
+    "unit_number":"8",
+    "question_text":"Which of the following is False with respect Python code?\nclass Student:\n  def __init__(self,id,age):\n    self.id=id\n    self.age=age\nstd=Student(1,20)",
+    "MCQ Answer":"C",
+    "option A":"\"std\" is the reference variable for object Student(1,20)",
+    "option B":"id and age are called the parameters",
+    "option C":"Every class must have a constructor",
+    "option D":"None of the above"
+  },
+  {
+    "No":"366",
+    "unit_number":"8",
+    "question_text":"What will be the output of below Python code?\nclass Student:\n  def __init__(self,name,id):\n    self.name=name\n    self.id=id\n    print(self.id)\nstd=Student(\"Simon\",1)\nstd.id=2\nprint(std.id)",
+    "MCQ Answer":"B",
+    "option A":"1\n1",
+    "option B":"1\n2",
+    "option C":"2\n1",
+    "option D":"2\n2"
+  },
+  {
+    "No":"367",
+    "unit_number":"8",
+    "question_text":"What will be the output of below Python code?\nclass A():\n def __init__(self,count=100):\n  self.count=count\n\nobj1=A()\nobj2=A(102)\nprint(obj1.count)\nprint(obj2.count)",
+    "MCQ Answer":"B",
+    "option A":"100\n100",
+    "option B":"100\n102",
+    "option C":"102\n102",
+    "option D":"Error"
+  },
+  {
+    "No":"368",
+    "unit_number":"8",
+    "question_text":"Which of the following is correct?\nclass A:\n    def __init__(self):\n       self.count=5\n       self.count=count+1\na=A()\nprint(a.count)",
+    "MCQ Answer":"D",
+    "option A":"5",
+    "option B":"6",
+    "option C":"0",
+    "option D":"Error"
+  },
+  {
+    "No":"369",
+    "unit_number":"8",
+    "question_text":"What will be the output of below Python code?\nclass A:\n   def __init__(self,num):\n      num=3\n      self.num=num\n   def change(self):\n      self.num=7\na=A(5)\nprint(a.num)\na.change()\nprint(a.num)",
+    "MCQ Answer":"D",
+    "option A":"5\n5",
+    "option B":"5\n7",
+    "option C":"3\n3",
+    "option D":"3\n7"
+  },
+  {
+    "No":"370",
+    "unit_number":"8",
+    "question_text":"What will be the output of the following code?                                                                                                                                      class Point:\n    \n    def __init__(self):\n\n        self.x = 0\n        self.y = 0\n\np = Point()         \nq = Point()         \n\nprint(\"Nothing seems to have happened with the points\")",
+    "MCQ Answer":"B",
+    "option A":"p\nq\nNothing seems to have happened with the points",
+    "option B":"Nothing seems to have happened with the points",
+    "option C":"<__main__.Point object>\n<__main__.Point object>\nNothing seems to have happened with the points",
+    "option D":"(0,0)\n(0,0)\nNothing seems to have happened with the points"
+  },
+  {
+    "No":"371",
+    "unit_number":"8",
+    "question_text":"What will be the output of the following snippet?                                                                                                                              class Point:\n   \n    def __init__(self):\n\n        self.x = 0\n        self.y = 0\n\np = Point()         \nq = Point()         \n\nprint(p)\nprint(q)\n\nprint(p is q)",
+    "MCQ Answer":"C",
+    "option A":"<__main__.Point object>\n<__main__.Point object>\nTrue",
+    "option B":"0",
+    "option C":"<__main__.Point object>\n<__main__.Point object>\nFalse",
+    "option D":"(0,0)\n(0,0)\nFalse"
+  },
+  {
+    "No":"372",
+    "unit_number":"8",
+    "question_text":"Will this program will print last statement?                                                             \ntry:\n    items = ['a', 'b']\n    third = items[1]\n    print(\"This won't print\")\nexcept Exception:\n    print(\"got an error\")\n\nprint(\"continuing\")\n",
+    "MCQ Answer":"C",
+    "option A":"This won't print\ngot an error\ncontinuing",
+    "option B":"got an error\ncontinuing",
+    "option C":"This won't print\ncontinuing",
+    "option D":"continuing"
+  },
+  {
+    "No":"373",
+    "unit_number":"8",
+    "question_text":"What will be the output of this following snippet?               \ntry:\n    items = ['a', 'b']\n    third = items[2]\n    print(\"This won't print\")\nexcept Exception as e:\n    print(\"got an error\")\n    print(e)\n\nprint(\"continuing\")\n",
+    "MCQ Answer":"C",
+    "option A":"This won't print\ngot an error\ncontinuing",
+    "option B":"got an error\ncontinuing",
+    "option C":"got an error\nlist index out of range\ncontinuing",
+    "option D":"continuing"
+  },
+  {
+    "No":"374",
+    "unit_number":"8",
+    "question_text":"Sanjeev has written a program for the file which already exists to read the content from the file. Indicate the line number if error exists in the given below code:\na=False  #Line 1\nwhile not a: #Line 2\n    try: #Line 3\n        f_n = input(\"Enter file name\") #Line 4\n        i_f = open(f_n, 'r') #Line 5 \n    except: #Line 6\n        print(\"Input file not found\") #Line 7",
+    "MCQ Answer":"A",
+    "option A":"No error",
+    "option B":"Line 1",
+    "option C":"Line 2",
+    "option D":"Line 3"
+  },
+  {
+    "No":"375",
+    "unit_number":"8",
+    "question_text":"What will be output of the following code?\nA=25\nB=40\ntry:\n    L=[]\n    for i in range(2):\n        L.append(A)\n    print(L[3])\n    L.append(C)\n    iff len(L)<5:\n        print(L)\n    C=34\nexcept IndexError:\n    print(\"Not in range\")\nexcept NameError:\n    print(\"Not defined\")\nexcept SyntaxError:\n    print(\"Write properly\")",
+    "MCQ Answer":"D",
+    "option A":"Write properly",
+    "option B":"Not in range",
+    "option C":"Both A&B",
+    "option D":"SyntaxError"
+  },
+  {
+    "No":"376",
+    "unit_number":"8",
+    "question_text":"When will the else part of try-except-else be executed?",
+    "MCQ Answer":"C",
+    "option A":"always",
+    "option B":"when an exception occurs",
+    "option C":"when no exception occurs",
+    "option D":"when an exception occurs in to except block"
+  },
+  {
+    "No":"377",
+    "unit_number":"8",
+    "question_text":"When is the finally block executed?",
+    "MCQ Answer":"D",
+    "option A":"when there is no exception",
+    "option B":"when there is an exception",
+    "option C":"only if some condition that has been specified is satisfied",
+    "option D":"always"
+  },
+  {
+    "No":"378",
+    "unit_number":"8",
+    "question_text":"What will be the output of the following Python code?\ndef foo():\n    try:\n        return 1\n    finally:\n        return 2\nk = foo()\nprint(k)",
+    "MCQ Answer":"B",
+    "option A":"1",
+    "option B":"2",
+    "option C":"3",
+    "option D":"Error, there is more than one return statement in a single try-finally block"
+  },
+  {
+    "No":"379",
+    "unit_number":"8",
+    "question_text":"What will be the output of the following Python code?\ndef foo():\n    try:\n        print(1)\n    finally:\n        print(2)\nk = foo()\nprint(k)",
+    "MCQ Answer":"A",
+    "option A":"1\n2\nNone",
+    "option B":"2\n2",
+    "option C":"1",
+    "option D":"2"
+  },
+  {
+    "No":"380",
+    "unit_number":"8",
+    "question_text":"What will be the output of the following Python code?\ndef getMonth(m):\n    if m<1 or m>12:\n        raise ValueError(\"Invalid\")\n    print(m)\ngetMonth(6)",
+    "MCQ Answer":"C",
+    "option A":"ValueError",
+    "option B":"Invalid",
+    "option C":"6",
+    "option D":"ValueError(“Invalid”)"
+  },
+  {
+    "No":"381",
+    "unit_number":"8",
+    "question_text":"Which of the following blocks will be executed whether an exception is thrown or not?",
+    "MCQ Answer":"C",
+    "option A":"except",
+    "option B":"else",
+    "option C":"finally",
+    "option D":"assert"
+  },
+  {
+    "No":"382",
+    "unit_number":"8",
+    "question_text":"What will be the output of below Python code?\nf=open(\"sample2.txt\",'w')\nf.write(\"Hello World\")\nf.close()\ntry:\n    m=5\n    f=open(\"sample2.txt\")\n    print(m)\n    print(f.read())\n    L=[1,2,3]\n    L[100]\nexcept FileNotFoundError:\n    print(\"File not found\")\nexcept NameError:\n    print(\"Variable not found\")\nexcept Exception:\n    print(\"List index out of range\")\n",
+    "MCQ Answer":"C",
+    "option A":"5\n     Hello World\n     File not found\n",
+    "option B":"5\n    hello world\n    List out index of range\n",
+    "option C":"5\n     Hello World\n     List out index of range\n",
+    "option D":"Hello World\n     5\n     List index out of range\n"
+  },
+  {
+    "No":"383",
+    "unit_number":"8",
+    "question_text":"What will be the output of the following code?\ntry:\n    a=5\n    print(a)\n    print(b\nexcept:\n          print(\"This is python\")",
+    "MCQ Answer":"A",
+    "option A":"SyntaxError: invalid syntax   ",
+    "option B":"NameError ",
+    "option C":"This is python  ",
+    "option D":"AttributeError"
+  },
+  {
+    "No":"384",
+    "unit_number":"8",
+    "question_text":"What will be the output of the following Python code?\nclass Employee:\n    empcount=0\n    def __init__(self,name):\n        self.name=name\n        Employee.empcount+=1\n    def display_count_emp(self):\n        print(\"There are\",Employee.empcount,\"employees\")\nemp1=Employee(\"s1\")\nemp2=Employee(\"h1\")\nemp3=Employee(\"s1\")\nemp2.display_count_emp()",
+    "MCQ Answer":"A",
+    "option A":"There are 3 employees",
+    "option B":"There are 2 employees",
+    "option C":"There are 1 employees\n ",
+    "option D":"There are 0 employees"
+  },
+  {
+    "No":"385",
+    "unit_number":"8",
+    "question_text":"What will be the output of the following Python code?\ndef simple():\n    for i in range(10):\n         if(i%2==0):\n            yield i\nfor i in simple():\n    print(i,end=\",\")",
+    "MCQ Answer":"B",
+    "option A":"yield ",
+    "option B":"0,2,4,6,8,",
+    "option C":"10",
+    "option D":"[0,2,4,6,8,]"
+  },
+  {
+    "No":"386",
+    "unit_number":"9",
+    "question_text":"What will be the output of the following Python code?         \nclass Test:\n    def __init__(self):\n        self.x = 0\nclass Derived_Test(Test):\n    def __init__(self):\n        self.y = 1\ndef main():\n     b = Derived_Test()\n     print(b.x,b.y)\nmain()",
+    "MCQ Answer":"C",
+    "option A":"0 1 ",
+    "option B":"1 0 ",
+    "option C":"Error because class B inherits A but variable x isn’t inherited",
+    "option D":"Error because when object is created, argument must be passed like Derived_Test(1)"
+  },
+  {
+    "No":"387",
+    "unit_number":"9",
+    "question_text":"What will be the output of the following Python code?      \nclass A():\n    def disp(self):\n        print(\"A disp()\")\nclass B(A):\n    pass\nobj = B()\nobj.disp()",
+    "MCQ Answer":"D ",
+    "option A":"Invalid syntax for inheritance",
+    "option B":"Error because when object is created, argument must be passed",
+    "option C":"Nothing is printed",
+    "option D":" A disp()"
+  },
+  {
+    "No":"388",
+    "unit_number":"9",
+    "question_text":"Suppose B is a subclass of A, to invoke the __init__ method in A from B, what is the line of code you should write?",
+    "MCQ Answer":"A",
+    "option A":"A.__init__(self)",
+    "option B":" B.__init__(self)",
+    "option C":"A.__init__(B)",
+    "option D":"B.__init__(A)"
+  },
+  {
+    "No":"389",
+    "unit_number":"9",
+    "question_text":"What will be the output of the following Python code?     \nclass Test:\n    def __init__(self):\n        self.x = 0\nclass Derived_Test(Test):\n    def __init__(self):\n        Test.__init__(self)\n        self.y = 1\ndef main():\n    b = Derived_Test()\n    print(b.x,b.y)\nmain()",
+    "MCQ Answer":"C",
+    "option A":"Error because class B inherits A but variable x isn’t inherited",
+    "option B":"0 0 ",
+    "option C":"0 1 ",
+    "option D":" Error, the syntax of the invoking method is wrong"
+  },
+  {
+    "No":"390",
+    "unit_number":"9",
+    "question_text":"What will be the output of the following Python code?      \nclass A:\n    def one(self):\n        return self.two()\n \n    def two(self):\n        return 'A'\n \nclass B(A):\n    def two(self):\n        return 'B'\nobj1=A()\nobj2=B()\nprint(obj1.two(),obj2.two())",
+    "MCQ Answer":"B",
+    "option A":"A A",
+    "option B":"A B ",
+    "option C":"B B ",
+    "option D":"B A"
+  },
+  {
+    "No":"391",
+    "unit_number":"9",
+    "question_text":"What type of inheritance is illustrated in the following Python code?  \nclass A():\n    pass\nclass B():\n    pass\nclass C(A,B):\n    pass",
+    "MCQ Answer":"B",
+    "option A":"Multi-level inheritance",
+    "option B":"Multiple inheritance",
+    "option C":"Hierarchical inheritance",
+    "option D":"Single-level inheritance"
+  },
+  {
+    "No":"392",
+    "unit_number":"9",
+    "question_text":"What type of inheritance is illustrated in the following Python code?      \nclass A():\n    pass\nclass B(A):\n    pass\nclass C(B):\n    pass",
+    "MCQ Answer":"A",
+    "option A":"Multi-level inheritance",
+    "option B":"Multiple inheritance",
+    "option C":"Hierarchical inheritance",
+    "option D":"Single-level inheritance"
+  },
+  {
+    "No":"393",
+    "unit_number":"9",
+    "question_text":"In which of the following does the CricketFan class correctly inherit from the PartyAnimal class?",
+    "MCQ Answer":"B",
+    "option A":" from party import PartyAnimal",
+    "option B":"class CricketFan(PartyAnimal)",
+    "option C":"an = PartyAnimal()",
+    "option D":"CricketFan = PartyAnimal()"
+  },
+  {
+    "No":"394",
+    "unit_number":"9",
+    "question_text":" What does single-level inheritance mean?",
+    "MCQ Answer":"C",
+    "option A":" A subclass derives from a class which in turn derives from another class",
+    "option B":"A single superclass inherits from multiple subclasses",
+    "option C":" A single subclass derives from a single superclass",
+    "option D":"Multiple base classes inherit a single derived class"
+  },
+  {
+    "No":"395",
+    "unit_number":"9",
+    "question_text":"What will be the output of the following Python code?  \nclass A:\n    def __init__(self,x):\n        self.x = x\n    def count(self,x):\n        self.x = self.x+1\nclass B(A):\n    def __init__(self, y=0):\n        A.__init__(self, 3)\n        self.y = y\n    def count(self):\n        self.y += 1     \ndef main():\n    obj = B()\n    obj.count()\n    print(obj.x, obj.y)\nmain()",
+    "MCQ Answer":"B",
+    "option A":"3 0",
+    "option B":"3 1",
+    "option C":"0 1",
+    "option D":"An exception in thrown"
+  },
+  {
+    "No":"396",
+    "unit_number":"9",
+    "question_text":"The child's __init__() function overrides the inheritance of the parent's __init__() function.",
+    "MCQ Answer":"A",
+    "option A":"1",
+    "option B":"0",
+    "option C":"CAN BE TRUE OR FALSE",
+    "option D":"CAN NOT SAY"
+  },
+  {
+    "No":"397",
+    "unit_number":"9",
+    "question_text":"What will be the output of the following Python code?       \nclass A:\n    def test1(self):\n        print(\" test of A called \")\nclass B(A):\n    def test(self):\n        print(\" test of B called \")\nclass C(A):\n    def test(self):\n        print(\" test of C called \")\nclass D(B,C):\n    def test2(self):\n        print(\" test of D called \")        \nobj=D()\nobj.test()",
+    "MCQ Answer":"C",
+    "option A":"test of B called\ntest of C called",
+    "option B":"test of C called\ntest of B called",
+    "option C":"test of B called",
+    "option D":"Error, both the classes from which D derives has same method test()"
+  },
+  {
+    "No":"398",
+    "unit_number":"9",
+    "question_text":" What does the following code output?                   \nclass People():\n\n    def __init__(self, name):\n      self.name = name\n\n    def namePrint(self):\n      print(self.name)\n\n person1 = People(\"Sally\")\n person2 = People(\"Louise\")\n person1.namePrint()",
+    "MCQ Answer":"A",
+    "option A":" Sally",
+    "option B":"Louise",
+    "option C":"Sally Louise",
+    "option D":"Person1"
+  },
+  {
+    "No":"399",
+    "unit_number":"9",
+    "question_text":"You cannot create object of which type of class",
+    "MCQ Answer":"C",
+    "option A":"base",
+    "option B":"derived ",
+    "option C":"abstract",
+    "option D":"intermediate"
+  },
+  {
+    "No":"400",
+    "unit_number":"9",
+    "question_text":"Which of the following best describes polymorphism?",
+    "MCQ Answer":"D",
+    "option A":"Ability of a class to derive members of another class as a part of its own definition",
+    "option B":"Means of bundling instance variables and methods in order to restrict access to certain class members",
+    "option C":"Focuses on variables and passing of variables to functions",
+    "option D":"Allows for objects of different types and behaviour to be treated as the same general type"
+  },
+  {
+    "No":"401",
+    "unit_number":"9",
+    "question_text":"What will be the output of the following Python code?  \nclass Demo:\n    def __init__(self):\n        self.x = 1\n    def change(self):\n        self.x = 10\nclass Demo_derived(Demo):\n    def change(self):\n        self.x=self.x+1\n        return self.x\ndef main():\n    obj = Demo_derived()\n    print(obj.change())\n \nmain()",
+    "MCQ Answer":"B",
+    "option A":"11",
+    "option B":"2",
+    "option C":"1",
+    "option D":"10"
+  },
+  {
+    "No":"402",
+    "unit_number":"9",
+    "question_text":"What will be the output of the following Python code?      \nclass Demo:\n    def check(self):\n        return \" Demo's check \"  \n    def display(self):\n        print(self.check())\nclass Demo_Derived(Demo):\n    def check(self):\n        return \" Derived's check \"\nDemo().display()\nDemo_Derived().display()",
+    "MCQ Answer":"A",
+    "option A":"Demo’s check                              Derived’s check",
+    "option B":"Demo’s check Demo’s check",
+    "option C":"Derived’s check Demo’s check",
+    "option D":"Syntax error"
+  },
+  {
+    "No":"403",
+    "unit_number":"9",
+    "question_text":"What will be the output of the following Python code? \nclass A:\n    def one(self):\n        return self.two()            \n    def two(self):\n        return 'A'   \nclass B(A):\n    def two(self):\n        return 'B'\nobj2=B()\nprint(obj2.two())",
+    "MCQ Answer":"D",
+    "option A":"A",
+    "option B":" An exception is thrown",
+    "option C":"A B ",
+    "option D":"B"
+  },
+  {
+    "No":"404",
+    "unit_number":"9",
+    "question_text":" What will be output for the following code?\n import numpy as np\n a = np.array([1,2,3,5,8])\n print (a.ndim)",
+    "MCQ Answer":"B",
+    "option A":"0",
+    "option B":"1",
+    "option C":"2",
+    "option D":"3"
+  },
+  {
+    "No":"405",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code? \n import numpy as np\na=np.array([1,2,3,4,5,6]) \n print(a)",
+    "MCQ Answer":"A",
+    "option A":"[1 2 3 4 5 6]",
+    "option B":"array([1, 2, 3, 4, 5])",
+    "option C":"(1 2 3 4 5 6)",
+    "option D":"(1,2,3,4,5,6)"
+  },
+  {
+    "No":"406",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code? \nimport numpy as np\narr = np.array(42)\nprint(arr)",
+    "MCQ Answer":"A",
+    "option A":"42",
+    "option B":"[42]",
+    "option C":"([42])",
+    "option D":"int "
+  },
+  {
+    "No":"407",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?   \nimport numpy as np\narr = np.array([1, 2, 3, 4])\nprint(arr[2])",
+    "MCQ Answer":"C",
+    "option A":"1",
+    "option B":"2",
+    "option C":"3",
+    "option D":"4"
+  },
+  {
+    "No":"408",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code? \nimport numpy as np\narr = np.array([1, 2, -5, 4])\nprint(arr[-3])",
+    "MCQ Answer":"A",
+    "option A":"2",
+    "option B":"1",
+    "option C":"-5",
+    "option D":"ERROR"
+  },
+  {
+    "No":"409",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code? \nimport numpy as np\narr = np.array([1, 2, -5, 4])\nprint(arr[-5])",
+    "MCQ Answer":"D",
+    "option A":"2",
+    "option B":"1",
+    "option C":"-5",
+    "option D":"ERROR"
+  },
+  {
+    "No":"410",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code? \nimport numpy as np\narr = np.array([1, 2, 3, 4])\nprint(arr[2] + arr[3])",
+    "MCQ Answer":"C",
+    "option A":"5",
+    "option B":"3",
+    "option C":"7",
+    "option D":"([3,4])"
+  },
+  {
+    "No":"411",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code? \nimport numpy as np\narr = np.array([[1,2,3,4,5], [6,7,8,9,10]])\nprint(arr[0, 1])",
+    "MCQ Answer":"B",
+    "option A":"6",
+    "option B":"2",
+    "option C":"4",
+    "option D":"10"
+  },
+  {
+    "No":"412",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?   \nimport numpy as np\narr = np.array([[1,2,3,4,5], [6,7,8,9,10]])\nprint(arr[1, -3])",
+    "MCQ Answer":"D",
+    "option A":"4",
+    "option B":"2",
+    "option C":"3",
+    "option D":"8"
+  },
+  {
+    "No":"413",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?   \nimport numpy as np\narr = np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]])\nprint(arr[0, 1, 2])",
+    "MCQ Answer":"C",
+    "option A":"12",
+    "option B":"3",
+    "option C":"6",
+    "option D":"9"
+  },
+  {
+    "No":"414",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?  \nimport numpy as np\narr = np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]])\nprint(arr[1, 1, 2])",
+    "MCQ Answer":"C",
+    "option A":"6",
+    "option B":"3",
+    "option C":"12",
+    "option D":"9"
+  },
+  {
+    "No":"415",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code? \nimport numpy as np\narr = np.array([1, 2, 3, 4, 5, 6, 7])\nprint(arr[1:5])",
+    "MCQ Answer":"B",
+    "option A":"[1 2 3 4]",
+    "option B":"[2 3 4 5]",
+    "option C":"[1  2  3  4  5 ]",
+    "option D":"[1 5]"
+  },
+  {
+    "No":"416",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?   \n import numpy as np\narr = np.array([1, 2, 3, 4, 5, 6, 7])\nprint(arr[1:-3])",
+    "MCQ Answer":"A",
+    "option A":"[2  3  4]",
+    "option B":"[1 2 3]",
+    "option C":"[5 6 7]",
+    "option D":"[3 2 1]"
+  },
+  {
+    "No":"417",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?  \nimport numpy as np\narr = np.array([1, 2, 3, 4, 5, 6, 7])\nprint(arr[4:])",
+    "MCQ Answer":"A",
+    "option A":"[ 5 6 7 ]",
+    "option B":"[1 2 3 4]",
+    "option C":"[1  2  3  4  5]",
+    "option D":"[1 5]"
+  },
+  {
+    "No":"418",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?  \nimport numpy as np\narr = np.array([1, 2, 3, 4, 5, 6, 7])\nprint(arr[:4])",
+    "MCQ Answer":"B",
+    "option A":"[4 5 6 7]",
+    "option B":"[1 2 3 4]",
+    "option C":"[1  2  3  4  5 ]",
+    "option D":"[1 5]"
+  },
+  {
+    "No":"419",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?  \nimport numpy as np\narr = np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]])\nprint(arr[1,1,0:3])",
+    "MCQ Answer":"A",
+    "option A":"[10 11 12]",
+    "option B":"[4 5 6]",
+    "option C":"[[10 11 12]]",
+    "option D":"[[[10 11 12]]]    "
+  },
+  {
+    "No":"420",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?   \nimport numpy as np\narr = np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]])\nprint(arr[1,0:3])",
+    "MCQ Answer":"A",
+    "option A":"[[ 7  8  9]\n [10 11 12]]",
+    "option B":"[10 11 12]",
+    "option C":"[[4 5 6]\n [ 7  8  9]\n [10 11 12]]",
+    "option D":"[ 7  8  9]\n [10 11 12]"
+  },
+  {
+    "No":"421",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?     \nimport numpy as np\narr = np.array([[1, 2, 3, 4], [5, 6, 7, 8]])\nprint(arr.shape)",
+    "MCQ Answer":"C",
+    "option A":"(2 4)",
+    "option B":"[2 4]",
+    "option C":"(2, 4)",
+    "option D":"2D"
+  },
+  {
+    "No":"422",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?  \nimport numpy as np\narr = np.array([[[1, 2, 3, 4], [5, 6, 7, 8]]])\nprint(arr.shape)",
+    "MCQ Answer":"B",
+    "option A":"(2,4)",
+    "option B":"(1, 2, 4)",
+    "option C":"3D",
+    "option D":"(0,2,4)"
+  },
+  {
+    "No":"423",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?   \nimport numpy as np\narr = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])\nnewarr = arr.reshape(4, 3)\nprint(newarr)",
+    "MCQ Answer":"A",
+    "option A":"[[ 1  2  3]\n [ 4  5  6]\n [ 7  8  9]\n [10 11 12]]",
+    "option B":"[ 1  2  3]\n [ 4  5  6]\n [ 7  8  9]\n [10 11 12]",
+    "option C":"[[[ 1  2  3]\n [ 4  5  6]\n [ 7  8  9]\n [10 11 12]]]",
+    "option D":"ERROR"
+  },
+  {
+    "No":"424",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?     \nimport numpy as np\narr = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])\nnewarr = arr.reshape(2, 3, 2)\nprint(newarr)",
+    "MCQ Answer":"A",
+    "option A":"[[[ 1  2]\n  [ 3  4]\n  [ 5  6]]\n\n [[ 7  8]\n  [ 9 10]\n  [11 12]]]",
+    "option B":"[[ 1  2  3]\n [ 4  5  6]\n [ 7  8  9]\n [10 11 12]]",
+    "option C":"[[ 1  2]\n  [ 3  4]\n  [ 5  6]]\n\n [[ 7  8]\n  [ 9 10]\n  [11 12]]",
+    "option D":"[ 1  2]\n [ 3  4]\n [ 5  6]\n [ 7  8]\n [ 9 10]\n [11 12]"
+  },
+  {
+    "No":"425",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?   \nimport numpy as np\narr = np.array([1, 2, 3, 4, 5, 6, 7, 8])\nnewarr = arr.reshape(2, 2, -1)\nprint(newarr)",
+    "MCQ Answer":"A",
+    "option A":"[[[1 2]\n  [3 4]]\n\n [[5 6]\n  [7 8]]]",
+    "option B":"[[[1 2 3 4]]\n\n [[5 6 7 8]]]",
+    "option C":"[[1 2 3 4 5 6 7 8]]",
+    "option D":"[[[1 2 3 4]\n  [5 6 7 8]]]"
+  },
+  {
+    "No":"426",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?  \n import numpy as np\narr = np.array([[1, 2, 3], [4, 5, 6]])\nnewarr = arr.reshape(-1)\nprint(newarr)",
+    "MCQ Answer":"A",
+    "option A":"[1 2 3 4 5 6]",
+    "option B":"6",
+    "option C":"[4,5,6]",
+    "option D":"[3,6]"
+  },
+  {
+    "No":"427",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?   \nimport numpy as np\narr1 = np.array([1, 2, 3])\narr2 = np.array([4, 5, 6])\narr = np.concatenate((arr1, arr2))\nprint(arr)",
+    "MCQ Answer":"A",
+    "option A":"[1 2 3 4 5 6]",
+    "option B":"[5,7,9]",
+    "option C":"[4,10,18]",
+    "option D":"[6,15]"
+  },
+  {
+    "No":"428",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?        \nimport numpy as np\narr1 = np.array([[1, 2], [3, 4]])\narr2 = np.array([[5, 6], [7, 8]])\narr = np.concatenate((arr1, arr2), axis=1)\nprint(arr)",
+    "MCQ Answer":"A",
+    "option A":"[[1 2 5 6]\n [3 4 7 8]]",
+    "option B":"[[1 2]\n [3 4]\n [5 6]\n [7 8]]",
+    "option C":"[[[1 2]\n  [3 4]]\n\n [[5 6]\n  [7 8]]]",
+    "option D":"ERROR"
+  },
+  {
+    "No":"429",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?         \nimport numpy as np\narr1 = np.array([[1, 2], [3, 4]])\narr2 = np.array([[5, 6], [7, 8]])\narr = np.concatenate((arr1, arr2), axis=0)\nprint(arr)",
+    "MCQ Answer":"B",
+    "option A":"[[1 2 5 6]\n [3 4 7 8]]",
+    "option B":"[[1 2]\n [3 4]\n [5 6]\n [7 8]]",
+    "option C":"[[[1 2]\n  [3 4]]\n\n [[5 6]\n  [7 8]]]",
+    "option D":"ERROR"
+  },
+  {
+    "No":"430",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?    \nimport numpy as np\narr1 = np.array([[[1, 2], [3, 4]]])\narr2 = np.array([[[5, 6], [7, 8]]])\narr = np.concatenate((arr1, arr2), axis=0)\nprint(arr)",
+    "MCQ Answer":"B",
+    "option A":"[[1 2]\n [3 4]\n [5 6]\n [7 8]]",
+    "option B":"[[[1 2]\n  [3 4]]\n\n [[5 6]\n  [7 8]]]",
+    "option C":"[[[1 2 5 6]\n [3 4 7 8]]]",
+    "option D":"[1 2 3 4 5 6 7 8]"
+  },
+  {
+    "No":"431",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?             \nimport numpy as np\narr1 = np.array([[[1, 2], [3, 4]]])\narr2 = np.array([[[5, 6], [7, 8]]])\narr = np.concatenate((arr1, arr2), axis=1)\nprint(arr)",
+    "MCQ Answer":"A",
+    "option A":"[[[1 2]\n  [3 4]\n  [5 6]\n  [7 8]]]",
+    "option B":"[[[1 2 5 6]\n [3 4 7 8]]]",
+    "option C":"[[[1 2]\n  [3 4]]\n\n [[5 6]\n  [7 8]]]",
+    "option D":"[[1 2]\n [3 4]\n [5 6]\n [7 8]]"
+  },
+  {
+    "No":"432",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?    \nimport numpy as np\narr = np.array([1, 2, 3, 4, 5, 6])\nnewarr = np.array_split(arr, 3)\nprint(newarr)",
+    "MCQ Answer":"A",
+    "option A":"[array([1, 2]), array([3, 4]), array([5, 6])]",
+    "option B":"[([1, 2]),([3, 4]),([5, 6])]",
+    "option C":"(1,2) (3,4) (5,6)",
+    "option D":"[1,2] [3,4] [5,6]"
+  },
+  {
+    "No":"433",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?     \nimport numpy as np\narr = np.array([1, 2, 3, 4, 5, 6])\nnewarr = np.array_split(arr, 4)\nprint(newarr)",
+    "MCQ Answer":"A",
+    "option A":"[array([1, 2]), array([3, 4]), array([5]), array([6])]",
+    "option B":"[([1, 2]),([3, 4]),([5]), ([6])]",
+    "option C":"[([1, 2]),([3, 4]),([5, 6])]",
+    "option D":"[array([1, 2]), array([3, 4]), array([5, 6])]"
+  },
+  {
+    "No":"434",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?       \nimport numpy as np\narr = np.array([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]])\nnewarr = np.array_split(arr, 3)\nprint(newarr)",
+    "MCQ Answer":"B",
+    "option A":"[array([[1, 2]]), array([[3, 4]]), array([[5, 6]]), array([[7, 8]]), array([[ 9, 10]]), array([[11, 12]])]",
+    "option B":"[array([[1, 2],\n       [3, 4]]), array([[5, 6],\n       [7, 8]]), array([[ 9, 10],\n       [11, 12]])]",
+    "option C":"[array([[ 1,  2],\n       [ 3,  4],\n       [ 5,  6],\n       [ 7,  8],\n       [ 9, 10],\n       [11, 12]])]",
+    "option D":"[[ 1  2]\n [ 3  4]\n [ 5  6]\n [ 7  8]\n [ 9 10]\n [11 12]]"
+  },
+  {
+    "No":"435",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?     \nimport numpy as np\narr = np.array([1, 2, 3, 4, 5, 6])\nnewarr = np.array_split(arr, 6)\nprint(newarr)",
+    "MCQ Answer":"A",
+    "option A":"[array([1]), array([2]), array([3]), array([4]), array([5]), array([6])]",
+    "option B":"[1 2 3 4 5 6]",
+    "option C":"[[1],[2],[3],[4],[5],[6]]",
+    "option D":"([1 2 3  4  5  6])"
+  },
+  {
+    "No":"436",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?      \nimport numpy as np\narr = np.array([1, 2, 3, 4, 5, 4, 4])\nx = np.where(arr == 4)\nprint(x)",
+    "MCQ Answer":"A",
+    "option A":"(array([3, 5, 6], dtype=int64),)",
+    "option B":"(3,5,6)",
+    "option C":"[3,5,6]",
+    "option D":"[3]"
+  },
+  {
+    "No":"437",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?    \nimport numpy as np\narr = np.array([[1, 2], [3, 4], [5, 4]])\nx = np.where(arr == 4)\nprint(x)",
+    "MCQ Answer":"A",
+    "option A":"(array([1, 2], dtype=int64), array([1, 1], dtype=int64))",
+    "option B":"(array([3, 5, 6],)",
+    "option C":"[3,5,6]",
+    "option D":"(([1, 2]),([1, 1]))"
+  },
+  {
+    "No":"438",
+    "unit_number":"9",
+    "question_text":"import numpy as np\narr = np.array([3, 2, 0, 1])\nprint(np.sort(arr))",
+    "MCQ Answer":"A",
+    "option A":"[0 1 2 3]",
+    "option B":"[3 2 1 0]",
+    "option C":"0 1 2 3",
+    "option D":"3 2 1 0"
+  },
+  {
+    "No":"439",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?\nimport numpy as np\narr = np.array([[3, 2], [0, 1]])\nprint(np.sort(arr))",
+    "MCQ Answer":"C",
+    "option A":"[[0,1],[2,3]]",
+    "option B":"[[0,1,2,3]]",
+    "option C":"[[2 3]\n [0 1]]",
+    "option D":"[0,1] [2,3]"
+  },
+  {
+    "No":"440",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?      \nimport numpy as np\narr = np.array(['banana', 'cherry', 'apple'])\nprint(np.sort(arr))",
+    "MCQ Answer":"A",
+    "option A":"['apple' 'banana' 'cherry']",
+    "option B":" 'apple' 'banana' 'cherry'",
+    "option C":"['apple', 'banana', 'cherry']",
+    "option D":"ERROR"
+  },
+  {
+    "No":"441",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?   \n import numpy as np\narr = np.array([True, False, True])\nprint(np.sort(arr))",
+    "MCQ Answer":"A",
+    "option A":"[False  True  True]",
+    "option B":"[0 1 1]",
+    "option C":"[1 0 1]",
+    "option D":"ERROR"
+  },
+  {
+    "No":"442",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?  \nimport numpy as np\narr = np.array([True, False, True,0,1])\nprint(np.sort(arr))",
+    "MCQ Answer":"B",
+    "option A":"[0 1 False  True  True]",
+    "option B":"[0 0 1 1 1]",
+    "option C":"[False  True  True 0 1]",
+    "option D":"[False False  True  True   True]"
+  },
+  {
+    "No":"443",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?  \n import numpy as np\narr = np.array(k)\nprint(arr)",
+    "MCQ Answer":"D",
+    "option A":"k",
+    "option B":"\"k\"",
+    "option C":"[k]",
+    "option D":"ERROR"
+  },
+  {
+    "No":"444",
+    "unit_number":"9",
+    "question_text":"What will be the output of the following code?\nclass A:\n    def rk(self):\n        print(\" In class A\")\nclass B:\n    def rk(self):\n        print(\" In class B\")\nclass C(A, B):\n    def rk(self):\n        pass\nr = C()\nprint(C.__mro__)",
+    "MCQ Answer":"A",
+    "option A":"\t(<class '__main__.C'>, <class '__main__.A'>, <class '__main__.B'>, <class ‘object'>)",
+    "option B":"(<class '__main__.A'>, <class '__main__.C'>, <class '__main__.B'>, <class 'object'>)",
+    "option C":"(<class '__main__.B'>, <class '__main__.C'>, <class '__main__.A'>, <class 'object'>)",
+    "option D":"D.\t(<class '__main__.C'>, <class '__main__.B'>, <class '__main__.A'>, <class 'object'>)"
+  },
+  {
+    "No":"445",
+    "unit_number":"9",
+    "question_text":"What is the output of the following code?     import numpy as np\na=np.array([1,2,3,4])\nprint(a.shape)",
+    "MCQ Answer":"A",
+    "option A":"(4, )",
+    "option B":"-4",
+    "option C":"(1,0)",
+    "option D":"(1,4)"
+  },
+  {
+    "No":"446",
+    "unit_number":"9",
+    "question_text":"What is wrong with this program?\nimport numpy as np\narr = np.array([1, 2, 3, 4, 5, 6, 7, 8])\nnewarr = arr.reshape(3, 3)\nprint(newarr)",
+    "MCQ Answer":"A",
+    "option A":"cannot reshape array of size 8 into shape (3,3)  ",
+    "option B":"cannot reshape array of size 7 into shape (3,3) ",
+    "option C":"there is no function called array    ",
+    "option D":"None of these"
+  },
+  {
+    "No":"447",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?\nimport numpy as np\nA=np.array([[[1,2], [4,3]], [[3,5], [6,4]]])\nx=np.where(A==4)\nprint(x)",
+    "MCQ Answer":"A",
+    "option A":"(array([0, 1], dtype=int64), array([1, 1], dtype=int64), array([0, 1], dtype=int64))",
+    "option B":"(array([1,2], dtype=int64), array([0, 1], dtype=int64), array([1, 1], dtype=int64))",
+    "option C":"(array([1, 1], dtype=int64), array([0, 1], dtype=int64))",
+    "option D":"Error"
+  },
+  {
+    "No":"448",
+    "unit_number":"9",
+    "question_text":"What will be the MRO for class P in program given below:\nclass A:\n    pass\nclass B:\n    pass\nclass C:\n    pass\nclass X(A,B):\n    pass\nclass Y(C,A,B):\n    pass\nclass Z(A):\n    pass\nclass P(Z,Y,X):\n    pass",
+    "MCQ Answer":"D",
+    "option A":"P,Z,Y,X,A,B,C,Object",
+    "option B":"P,Z,A,Y,C,A,B,X,A,B,Object",
+    "option C":"P,Z,A,Y,C,B,X,Object",
+    "option D":"P,Z,Y,C,X,A,B,Object"
+  },
+  {
+    "No":"449",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?\nfrom abc import ABC,abstractmethod\nclass Father(ABC):\n    @abstractmethod\n    def display(self):\n        pass\n    def play(self):\n        print('Abstract class')\nclass Son(Father):\n    def play(self):\n        print('Child class')\nA=Son()\nA.play()",
+    "MCQ Answer":"D",
+    "option A":"Child class",
+    "option B":"Abstract class",
+    "option C":"Child class\n       Abstract class",
+    "option D":"Error"
+  },
+  {
+    "No":"450",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?\nimport numpy as np\narr1=np.array ([[1,3], [14,20], [5,6]])\narr2=np.array ([[6], [9], [12]])\narr=np.concatenate((arr1,arr2),axis=1)\nprint(arr)",
+    "MCQ Answer":"B",
+    "option A":"[[1 3]\n         [14 20]\n         [5 6]]",
+    "option B":"[[ 1  3  6]\n          [14 20  9]\n          [ 5  6 12]]",
+    "option C":"[[6]\n         [9]\n         [12]]",
+    "option D":"[1 3 6 14 20 9 5 6 12]"
+  },
+  {
+    "No":"451",
+    "unit_number":"9",
+    "question_text":"What will be the output of the following Python code?          \n\nclass A():\n    def disp(self):\n        print(\"C disp()\")\nclass C():\n    def disp(self):\n        print(\"A disp()\")        \nclass B(A,C):\n    def dis(self):\n        print(\"B disp()\")      \nobj = B()\nobj.disp()",
+    "MCQ Answer":"A",
+    "option A":"C disp()",
+    "option B":"A disp()",
+    "option C":"B disp()",
+    "option D":"A disp() \nC disp()"
+  },
+  {
+    "No":"452",
+    "unit_number":"9",
+    "question_text":"What will be the output of the following Python code?    \n                                      \nclass A:\n    def __init__(self,x=3):\n        self._x = x        \nclass B(A):\n    def __init__(self):\n        super().__init__(5)\n    def display(self):\n        print(self._x)\ndef main():\n    obj = B()\n    obj.display() \nmain()",
+    "MCQ Answer":"B",
+    "option A":"3",
+    "option B":"5",
+    "option C":"53",
+    "option D":"35"
+  },
+  {
+    "No":"453",
+    "unit_number":"9",
+    "question_text":"What will be the output of the following code:\nclass A:\n    def __init__(self,x):\n        self.x = x\n    def count(self,x):\n        self.x = self.x-2\nclass B(A):\n    def __init__(self, y=0):\n        A.__init__(self, 3)\n        self.y = y\n    def count(self):\n        self.y -= 1\ndef main():\n    obj = B()\n    obj.count()\n    print(obj.x, obj.y)\nmain()",
+    "MCQ Answer":"C",
+    "option A":"3 0 ",
+    "option B":"3 1",
+    "option C":"3 -1",
+    "option D":"Error"
+  },
+  {
+    "No":"454",
+    "unit_number":"9",
+    "question_text":"What will be the output of the following code:\nclass P:\n    pass\nclass Q:\n    pass\nclass R(P,Q):\n    pass\nclass S(Q):\n    pass     \nclass T(S,R):\n    pass\na=T()\nT.__mro__",
+    "MCQ Answer":"C",
+    "option A":"[__main__.T, __main__.S, __main__.R, __main__.P, __main__.Q]",
+    "option B":"(__main__.T, __main__.S, __main__.P, __main__.Q, __main__.R, object)",
+    "option C":"(__main__.T, __main__.S, __main__.R, __main__.P, __main__.Q, object)",
+    "option D":"(__main__.T, __main__.S, __main__.Q, __main__.R, __main__.P, object)"
+  },
+  {
+    "No":"455",
+    "unit_number":"9",
+    "question_text":"What will be the output of the following code:\nclass Demo:\n    def __init__(self):\n        self.x = 1\n    def change(self):\n        self.x = 10\n        return self.x\nclass Demo_derived(Demo):\n    def change(self):\n        self.x*=5\n        return self.x\ndef main():\n    obj = Demo_derived()\n    print(obj.change())\nmain()",
+    "MCQ Answer":"A",
+    "option A":"5",
+    "option B":"10",
+    "option C":"1",
+    "option D":"2"
+  },
+  {
+    "No":"456",
+    "unit_number":"9",
+    "question_text":"What will be the output of the following code:\nimport numpy as np\narr = np.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 10], [11, 12]]])\nnewarr = arr.reshape(4, 1, -1)\nprint(newarr)",
+    "MCQ Answer":"B",
+    "option A":"[[ 1 2 3]\n      [ 4 5 6]\n    [ 7 8 9]\n    [10 11 12]]",
+    "option B":"[[[ 1  2  3]]\n [[ 4  5  6]]\n[[ 7  8  9]]\n  [[10 11 12]]]",
+    "option C":"[[[ 1  2  3]\n[ 4  5  6]]\n[[ 7  8  9]\n    [10 11 12]]]",
+    "option D":"Error"
+  },
+  {
+    "No":"457",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?    \nimport numpy as np\narr=np.array([[[1,2,3],[4,5,6]],[[7,8,9],[10,11,12]]])\narr1=np.array([[[4,3,2],[7,10,15]],[[6,1,2],[8,7,9]]])\nnewarr=np.concatenate((arr,arr1),axis=1)\nx=newarr[:1:,:2:,:3:2]\ny=np.sort(x)\nprint(y)",
+    "MCQ Answer":"C",
+    "option A":"[[[4 2]\n        [7 15]]]\n",
+    "option B":"Value Error",
+    "option C":"[[[1 3]\n        [4 6]]]\n",
+    "option D":"[[[1 2 3]\n        [4  5 6]]]"
+  },
+  {
+    "No":"458",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code? \nimport numpy as np\narr = np.array([[1,2,3,4,5], [6,7,8,9,10]])\nprint(arr[0:, -3:-2])\n",
+    "MCQ Answer":"A",
+    "option A":"[[3]\n      [8]]\n",
+    "option B":"[[3 4 5]\n        [8 9 10]]\n",
+    "option C":"[[3],\n       [8]]\n",
+    "option D":"[[3 8]]"
+  },
+  {
+    "No":"459",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?    \nimport numpy as np\narr=np.array([[[1,2,3],[4,5,6]],[[6,5,3],[4,2,1]]])\nx=arr[0:2,::2,::2]\nprint(x.shape)\n",
+    "MCQ Answer":"A",
+    "option A":"(2,1,2)",
+    "option B":"(1,2,4)",
+    "option C":"(2,2,3)",
+    "option D":"(2,3,2)"
+  },
+  {
+    "No":"460",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?             \nimport numpy as np\narr1 = np.array([[[1, 2], [3, 4]]])\narr2 = np.array([[[5, 6], [7, 8]]])\narr = np.concatenate((arr1, arr2), axis=1)\nprint(arr.shape)\n",
+    "MCQ Answer":"A",
+    "option A":"(1,4,2)",
+    "option B":"(1,2,4)",
+    "option C":"(2,2,2)",
+    "option D":"(4,2)"
+  },
+  {
+    "No":"461",
+    "unit_number":"9",
+    "question_text":"What will be the output of the following Python code?  \nclass P1:\n    def hi(self):\n        print(\"hi  P1\")\nclass P2:\n    def hi(self):\n        print(\"hi  P2\")\nclass C1(P1):\n        pass\nclass C2(P1):\n    def hi(self):\n        print(\"hello  C2\")\nclass GC(C1,C2):\n    pass\ngc=GC()\ngc.hi()",
+    "MCQ Answer":"D",
+    "option A":"hello  C1",
+    "option B":"   hi  C1",
+    "option C":"hello  GC",
+    "option D":"hello  C2"
+  },
+  {
+    "No":"462",
+    "unit_number":"9",
+    "question_text":"What will be the output of the following Python code?  \nclass P1:\n    def hello(self):\n        print(\"hi  P1\")\nclass P2:\n    def hi(self):\n        print(\"hi  P2\")\nclass C1(P1):\n        pass\nclass C2(P1):\n    def h(self):\n        print(\"hello  C2\")\nclass GC(C1,C2):\n    pass\ngc=GC()\ngc.hello()",
+    "MCQ Answer":"A",
+    "option A":"hi  P1",
+    "option B":"   hi  C1",
+    "option C":"hello  GC",
+    "option D":"hello  C2"
+  },
+  {
+    "No":"463",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code? \nimport numpy as np \narr = np.array([1, 2, 3, 4, 5, 6, 7, 8]) \nx = np.where(arr%2 == 1) \nprint(x)",
+    "MCQ Answer":"A",
+    "option A":"(array([0, 2, 4, 6], \n        dtype=int64),)",
+    "option B":"arr([1, 3, 5, 7],)",
+    "option C":"[3]",
+    "option D":"All of these"
+  },
+  {
+    "No":"464",
+    "unit_number":"9",
+    "question_text":"What is the Output of the Following Code?\n\nclass A:\n    def __init__(self,  x=5):\n        self.x = x\nclass der(A):\n    def __init__(self, y=3):\n        super().__init__()\n        self.y = y\ndef main():\n    obj = der()\n    print(obj.x, obj.y)\nmain()",
+    "MCQ Answer":"C",
+    "option A":"1 2",
+    "option B":"3 5",
+    "option C":"5 3",
+    "option D":"Error"
+  },
+  {
+    "No":"465",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?\n\nimport numpy as np\narr = np.array([[1,2,3,4,5], [6,7,8,9,10]])\nprint(arr[0,1],arr[1,1])",
+    "MCQ Answer":"D",
+    "option A":"1 6",
+    "option B":"1 7",
+    "option C":" 1 8 ",
+    "option D":"2 7"
+  },
+  {
+    "No":"466",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?\n\nimport numpy as np\narr = np.array([3, 2, 0, 1])\nprint(np.sort(arr)[::-1])",
+    "MCQ Answer":"A",
+    "option A":"[3 2 1 0]",
+    "option B":"[1 2 3 0]",
+    "option C":"[0 1 2 3]",
+    "option D":"0 1 2 3"
+  },
+  {
+    "No":"467",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?\n\narr1 = np.array([[1,2],[5,6]])\narr2 = np.array([[3,4],[7,8]])\narr=np.concatenate((arr1,arr2))\nfor i in arr:\n    for j in i:\n        if(j%2==0):\n            newarr=j\nprint(newarr)",
+    "MCQ Answer":"D",
+    "option A":"[7 8]",
+    "option B":"7",
+    "option C":"4",
+    "option D":"8"
+  },
+  {
+    "No":"468",
+    "unit_number":"9",
+    "question_text":"What is the output of following code?\n\narr = np.array([1,2,3,4,5,6,7,8])\narr.reshape(2,4)\nprint(arr.ndim)",
+    "MCQ Answer":"A",
+    "option A":"1",
+    "option B":"2",
+    "option C":"3",
+    "option D":"(2,)"
+  },
+  {
+    "No":"469",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?\nimport numpy as np\na=np.array([[5],[7],[8]])\nb=np.array([[5,7,8]])\nprint(b+a)",
+    "MCQ Answer":"A",
+    "option A":"[[10 12 13]\n  [12 14 15]\n  [13 15 16]]",
+    "option B":"[[10 10 10]\n[14 14 14]\n [16 16 16]]",
+    "option C":"ValueError",
+    "option D":"TypeError"
+  },
+  {
+    "No":"470",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?\nclass A:\n    def hello(self):\n        print(\"1\",end=\",\")\n    def hello(self):\n        print(\"2\",end=\",\")\nclass B(A):\n    def __init__(self):\n        self.hello()\n    def hello(self):\n         print(\"3\",end=\",\")\n         super().hello()\nb=B()\nb.hello()",
+    "MCQ Answer":"A",
+    "option A":"3,2,3,2, ",
+    "option B":"3,2 ",
+    "option C":"2,3,2,3, ",
+    "option D":"3,"
+  },
+  {
+    "No":"471",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?\nclass A:\n    money=5000\n    def __init__(self):\n        self.money+=A.money\nclass B(A):\n    def display(self):\n        self.money+=2000\n        print(self.money)\nobj=B()\nobj.display()",
+    "MCQ Answer":"A",
+    "option A":"12000",
+    "option B":"7000",
+    "option C":"5000",
+    "option D":"3000"
+  },
+  {
+    "No":"472",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code?\nclass A:\n    a=20\n    def __init__(self):\n        self.a+=10\nclass B(A):\n    a=15\n    def buy(self):\n        pass\nclass C(B,A):\n    a=30\n    def buy(self):\n        print(self.a)\nobj=C()\nobj.buy()",
+    "MCQ Answer":"C",
+    "option A":"30",
+    "option B":"20",
+    "option C":"40",
+    "option D":"10"
+  },
+  {
+    "No":"473",
+    "unit_number":"9",
+    "question_text":"What will be the output of the following code?\nimport numpy as np\narr = np.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]])\narr[0, 1, : :-2]",
+    "MCQ Answer":"B",
+    "option A":"array([4, 6])",
+    "option B":"array([6, 4])",
+    "option C":"array([5])",
+    "option D":"array([6, 5, 4])"
+  },
+  {
+    "No":"474",
+    "unit_number":"9",
+    "question_text":"What will be output for the following code? \nimport numpy as np\narr = np.array([[[1,2,3,4,5], [6,7,8,9,10]]])\nprint(arr[:,0, -3])",
+    "MCQ Answer":"B",
+    "option A":"array([2])",
+    "option B":"array([3])",
+    "option C":"array([8])",
+    "option D":"array([4])"
+  },
+  {
+    "No":"475",
+    "unit_number":"9",
+    "question_text":"What will be the output of the following code?\n\nimport numpy as np\narr1 = np.array([[[1, 2], [3, 4]]])\narr2 = np.array([[[5, 6], [7, 8]]])\narr = np.concatenate((arr1, arr2), axis=2)\nprint(arr.shape)",
+    "MCQ Answer":"B",
+    "option A":"(2, 2, 2)",
+    "option B":"(1, 2, 4)",
+    "option C":"(1, 4, 2)",
+    "option D":"(1, 4, 2)"
+  },
+  {
+    "No":"476",
+    "unit_number":"10",
+    "question_text":"In the following syntax given below:\nplt.plot(ypoints,’o:r’)\nWhat does this ‘o:r’ stands for?",
+    "MCQ Answer":"D",
+    "option A":"o (marker), : (color) and r (line)",
+    "option B":"o (color), : (line) and r (marker)",
+    "option C":"o (line), : (marker) and r (color)",
+    "option D":"o (marker), : (line) and r (color)"
+  },
+  {
+    "No":"477",
+    "unit_number":"10",
+    "question_text":"In  the given syntax what does this ms indicates?\nplt.plot(ypoints,marker=’o’,ms=10)",
+    "MCQ Answer":"D",
+    "option A":"Markerborder",
+    "option B":"Markercolor",
+    "option C":"Markershape",
+    "option D":"Markersize"
+  },
+  {
+    "No":"478",
+    "unit_number":"10",
+    "question_text":"Consider the code given below:\nplt.bar(cities, population,color=[‘r’,’g’,’b’,’m’])\nwhat will be the colour of last bar?",
+    "MCQ Answer":"A",
+    "option A":"Magneta",
+    "option B":"Green",
+    "option C":"Blue",
+    "option D":"Black"
+  },
+  {
+    "No":"479",
+    "unit_number":"10",
+    "question_text":"Which type of error will be generated in this program and why?                            import matplotlib.pyplot as plt\nimport numpy as np\nypoints = np.array([3,8,1,10,5,7])\nplt.plot(ypoints,linestyle='*')\nplt.show()",
+    "MCQ Answer":"B",
+    "option A":"Syntax Error as '*' this type of linestyle does not exist",
+    "option B":"Value Error as '*' this type of linestyle does not exist",
+    "option C":"Type Error as linestyle is not proper with this type of array",
+    "option D":"Syntax Error as this is not a syntax of linestyle"
+  },
+  {
+    "No":"480",
+    "unit_number":"10",
+    "question_text":"Which linestyle does Python takes by default?",
+    "MCQ Answer":"D",
+    "option A":"Dashpot",
+    "option B":"Dotted",
+    "option C":"Dashed",
+    "option D":"Solid"
+  },
+  {
+    "No":"481",
+    "unit_number":"10",
+    "question_text":"The following code will generate which type of linestyle? \nplt.plot(ypoints,linestyle=':')",
+    "MCQ Answer":"A",
+    "option A":"Dotted",
+    "option B":"Dashed",
+    "option C":"Value Error",
+    "option D":"Syntax Error"
+  },
+  {
+    "No":"482",
+    "unit_number":"10",
+    "question_text":"Consider the following code written to display a bar chart \nx=range(0,40,8)\ny=range(10,100,10)\nplt.bar(x,y)\nWhile executing it, is producing error. Why?",
+    "MCQ Answer":"B",
+    "option A":"Both the sequences x and y do not start with 0",
+    "option B":"Both the sequences x and y are not of same shape",
+    "option C":"Values produced by range is not considered for chart.",
+    "option D":"Both the sequences x and y have values with different intervals"
+  },
+  {
+    "No":"483",
+    "unit_number":"10",
+    "question_text":"The following syntax will create:\nplt.subplot(2,1,1)\nplt.subplot(2,1,2)",
+    "MCQ Answer":"A",
+    "option A":"Will create two subplots- above and below",
+    "option B":"Will create two different line plots ",
+    "option C":"Will create two subplots (side by side)",
+    "option D":"Syntax error will be generated"
+  },
+  {
+    "No":"484",
+    "unit_number":"10",
+    "question_text":"The following syntax indicates:\nplt.subplot(3,1,2)",
+    "MCQ Answer":"A",
+    "option A":"position of 1st plot at 3rd row, 1st column and 2nd place",
+    "option B":"position of 1st plot at 1st row, 3rd column, and 2nd place",
+    "option C":"position of 1st plot at 2nd row, 3rd column and 1st place",
+    "option D":"position of 1st plot at 2nd row, 1st column and 3rd place"
+  },
+  {
+    "No":"485",
+    "unit_number":"10",
+    "question_text":"Which function is used to configure page title, layout, and favicon in Streamlit?",
+    "MCQ Answer":"B",
+    "option A":"st.page_config()",
+    "option B":"st.set_page_config()",
+    "option C":"st.configure_page()",
+    "option D":"st.page_setup()"
+  },
+  {
+    "No":"486",
+    "unit_number":"10",
+    "question_text":"Which of the following is correct to display the largest heading in Streamlit?",
+    "MCQ Answer":"B",
+    "option A":"st.header(\"Welcome\")",
+    "option B":"st.title(\"Welcome\")",
+    "option C":"st.markdown(\"Welcome\")",
+    "option D":"st.heading(\"Welcome\")"
+  },
+  {
+    "No":"487",
+    "unit_number":"10",
+    "question_text":"Which of the following can display both text and variables together?",
+    "MCQ Answer":"B",
+    "option A":"st.text()",
+    "option B":"st.write()",
+    "option C":"st.code()",
+    "option D":"st.header()"
+  },
+  {
+    "No":"488",
+    "unit_number":"10",
+    "question_text":"Which function is used to place widgets inside a sidebar?",
+    "MCQ Answer":"C",
+    "option A":"st.sidebar.widget()",
+    "option B":"st.sidebar()",
+    "option C":"st.sidebar.<widget>()",
+    "option D":"st.column.sidebar()"
+  },
+  {
+    "No":"489",
+    "unit_number":"10",
+    "question_text":"Which function will allow a multi-line text input from the user?",
+    "MCQ Answer":"B",
+    "option A":"st.text_input()",
+    "option B":"st.text_area()",
+    "option C":"st.write_input()",
+    "option D":"st.multiline_input()"
+  },
+  {
+    "No":"490",
+    "unit_number":"10",
+    "question_text":"Which widget is best suited for selecting a value between 0 and 100 continuously?",
+    "MCQ Answer":"B",
+    "option A":"st.number_input()",
+    "option B":"st.slider()",
+    "option C":"st.selectbox()",
+    "option D":"st.radio()"
+  },
+  {
+    "No":"491",
+    "unit_number":"10",
+    "question_text":"Which input widget allows multiple selections from a list?",
+    "MCQ Answer":"D",
+    "option A":"st.radio()",
+    "option B":"st.checkbox()",
+    "option C":"st.selectbox()",
+    "option D":"st.multiselect()"
+  },
+  {
+    "No":"492",
+    "unit_number":"10",
+    "question_text":"Which of the following widgets is NOT available in Streamlit?",
+    "MCQ Answer":"C",
+    "option A":"st.date_input()",
+    "option B":"st.time_input()",
+    "option C":"st.datetime_input()",
+    "option D":"st.file_uploader()"
+  },
+  {
+    "No":"493",
+    "unit_number":"10",
+    "question_text":"Which function is used to upload CSV, images, or PDF files?",
+    "MCQ Answer":"C",
+    "option A":"st.upload()",
+    "option B":"st.file_upload()",
+    "option C":"st.file_uploader()",
+    "option D":"st.upload_file()"
+  },
+  {
+    "No":"494",
+    "unit_number":"10",
+    "question_text":"Which function is used to create a downloadable file button?",
+    "MCQ Answer":"B",
+    "option A":"st.button()",
+    "option B":"st.download_button()",
+    "option C":"st.save_button()",
+    "option D":"st.export_button()"
+  },
+  {
+    "No":"495",
+    "unit_number":"10",
+    "question_text":"Which function is used to display images in Streamlit?",
+    "MCQ Answer":"D",
+    "option A":"st.show_image()",
+    "option B":"st.display_image()",
+    "option C":"st.img()",
+    "option D":"st.image()"
+  },
+  {
+    "No":"496",
+    "unit_number":"10",
+    "question_text":"Which function will show a green success message?",
+    "MCQ Answer":"A",
+    "option A":"st.success()",
+    "option B":"st.done()",
+    "option C":"st.complete()",
+    "option D":"st.info()"
+  },
+  {
+    "No":"497",
+    "unit_number":"10",
+    "question_text":"What will be displayed after clicking the button in the following code?\n\nif st.button(\"Click Me\"):\n    st.write(\"Hello Streamlit\")",
+    "MCQ Answer":"C",
+    "option A":"Nothing",
+    "option B":"Always \"Hello Streamlit\"",
+    "option C":"\"Hello Streamlit\" only when button is clicked",
+    "option D":"Error"
+  },
+  {
+    "No":"498",
+    "unit_number":"10",
+    "question_text":"Which function is used to display a Matplotlib chart in Streamlit?",
+    "MCQ Answer":"C",
+    "option A":"st.chart()",
+    "option B":"st.plot()",
+    "option C":"st.pyplot()",
+    "option D":"st.line_chart()"
+  },
+  {
+    "No":"499",
+    "unit_number":"10",
+    "question_text":"Which function directly creates a line chart without using Matplotlib?",
+    "MCQ Answer":"A",
+    "option A":"st.line_chart()",
+    "option B":"st.plot_line()",
+    "option C":"st.draw_line()",
+    "option D":"st.chart_line()"
+  },
+  {
+    "No":"500",
+    "unit_number":"10",
+    "question_text":"What will the slider return in the following code?\n\nage = st.slider(\"Select Age\", 0, 100, 25)\nst.write(\"Age:\", age)",
+    "MCQ Answer":"B",
+    "option A":"Always returns 25",
+    "option B":"Returns user’s selected age between 0–100",
+    "option C":"Returns only 0 or 100",
+    "option D":"Error"
+  },
+  {
+    "No":"501",
+    "unit_number":"10",
+    "question_text":"What will be the output of the following code if \"Python\" is selected?\n\nlang = st.selectbox(\"Choose Language\", [\"Python\", \"Java\", \"C++\"])\nst.write(\"You selected:\", lang)",
+    "MCQ Answer":"C",
+    "option A":"You selected: Java",
+    "option B":"You selected: C++",
+    "option C":"You selected: Python",
+    "option D":"Error"
+  },
+  {
+    "No":"502",
+    "unit_number":"10",
+    "question_text":"What will this code do?\n\nwith st.expander(\"See Details\"):\n    st.write(\"This is inside expander\")",
+    "MCQ Answer":"B",
+    "option A":"Always shows text without toggle",
+    "option B":"Shows collapsible section with \"See Details\"",
+    "option C":"Error",
+    "option D":"Creates sidebar only"
+  },
+  {
+    "No":"503",
+    "unit_number":"10",
+    "question_text":"What does the following code do?\n\nfile = st.file_uploader(\"Upload a CSV\", type=[\"csv\"])\nif file is not None:\n    st.write(\"File Uploaded Successfully!\")",
+    "MCQ Answer":"C",
+    "option A":"Always shows \"File Uploaded Successfully!\"",
+    "option B":"Uploads only images",
+    "option C":"Uploads CSV and confirms success",
+    "option D":"Error"
+  }
+];
+
+    let currentIndex = 0;
+
+function renderQuestion(index) {
+  const q = questions[index];
+  const cardFront = document.getElementById("cardFront");
+  const cardBack = document.getElementById("cardBack");
+
+  cardFront.innerHTML = `
+    <h3>Q${q.No} (Unit ${q.unit_number})</h3>
+    <pre class="code-block">${escapeHTML(q.question_text)}</pre>
+    <div class="options">
+      <div>A. ${escapeHTML(q["option A"])}</div>
+      <div>B. ${escapeHTML(q["option B"])}</div>
+      <div>C. ${escapeHTML(q["option C"])}</div>
+      <div>D. ${escapeHTML(q["option D"])}</div>
+    </div>
+  `;
+  cardBack.innerHTML = `Answer: ${escapeHTML(q["MCQ Answer"])}`;
+  document.getElementById("quizCard").classList.remove("flipped");
+}
+
+function escapeHTML(str) {
+  if (!str) return "";
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+
+    function flipCard() {
+      document.getElementById("quizCard").classList.toggle("flipped");
+    }
+
+    function prevQuestion() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        renderQuestion(currentIndex);
+      }
+    }
+
+    function nextQuestion() {
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        renderQuestion(currentIndex);
+      }
+    }
+
+    function searchQuestion() {
+      const query = document.getElementById("searchInput").value.trim();
+      if (!query) return;
+      const idx = questions.findIndex(q => q.No === query || q.unit_number === query);
+      if (idx !== -1) {
+        currentIndex = idx;
+        renderQuestion(currentIndex);
+      } else {
+        alert("Question not found!");
+      }
+    }
+
+    // Initial render
+    renderQuestion(currentIndex);
+  // existing functions: renderQuestion, nextQuestion, prevQuestion
+
+  // Keyboard navigation
+  document.addEventListener("keydown", function(event) {
+    if(event.key === "ArrowRight") {
+      nextQuestion();
+    } else if(event.key === "ArrowLeft") {
+      prevQuestion();
+    }
+  });
+
+  </script>
+  <div class="footer">
+  Created by Prof. Manish Patel
+</div>
+
+</body>
+</html>
