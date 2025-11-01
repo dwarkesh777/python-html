@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .a {
+            border-width: 5px;
+            border-style: dashed;
+            border-color: blue;
+        }
+
+        .b {
+            border-style: solid dashed double dotted;
+            border-color: RED blue violet green;
+        }
+
+        .c {
+            border-right: 3px double blue;
+        }
+
+        .d {
+            border-color: violet;
+            border-width: 2px;
+        }
+
+        .box1 {
+            height: 300px;
+            width: 300px;
+            border: 5px solid blue;
+            padding: 50px;
+            margin: 50px;
+            box-sizing: content-box;
+            box-shadow: 5px 5px 15px aqua;
+        }
+
+        .box2 {
+            height: 300px;
+            width: 300px;
+            border: 5px solid blue;
+            padding: 50px;
+            margin: 50px;
+            box-sizing: border-box;
+            box-shadow: 5px 5px 15px aqua;
+        }
+
+        body {
+            background-image: url("download.jfif");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: auto;
+            background-attachment: fixed
+        }
+
+        input:focus {
+            background-color: limegreen;
+        }
+
+        input {
+            background-color: aqua;
+        }
+    </style>
+</head>
+
+<body>
+    <input type="text">
+    <hr>
+    <p class="a">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Minus voluptatibus eaque minima consectetur
+        assumenda necessitatibus neque officia incidunt dolor aperiam ex ullam aut, voluptatem laborum! Id, laudantium
+        ut. Aspernatur, eaque?</p>
+    <p class="b">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Suscipit, libero fuga omnis doloremque
+        molestiae consectetur reiciendis, laborum illum quam quos tempora, eveniet exercitationem. Ipsum placeat magni
+        molestias ex repudiandae consectetur!</p>
+    <p class="c">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Suscipit, libero fuga omnis doloremque
+        molestiae consectetur reiciendis, laborum illum quam quos tempora, eveniet exercitationem. Ipsum placeat magni
+        molestias ex repudiandae consectetur!</p>
+    <p class="d">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Suscipit, libero fuga omnis doloremque
+        molestiae consectetur reiciendis, laborum illum quam quos tempora, eveniet exercitationem. Ipsum placeat magni
+        molestias ex repudiandae consectetur!</p>
+    <hr>
+    <div class="box1">content box Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi dolorem, quo
+        dignissimos optio, ipsa dolores sunt porro suscipit laboriosam aliquam saepe blanditiis nam consequuntur? Nobis
+        inventore vero hic assumenda incidunt. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Aliquid sequi
+        placeat id ut mollitia sint quibusdam quaerat deserunt voluptate laboriosam. Reprehenderit officia soluta
+        necessitatibus eos distinctio aut quis, ipsa molestias! loren
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis in ipsa ex quam necessitatibus alias consectetur
+        repellat magnam! Expedita recusandae eaque voluptates sed dicta deleniti repellendus omnis nihil quo unde?lo
+    </div>
+    <div class="box2">border box Lorem, ipsum dolor sit amet consectetur adipisicing elit. Laborum cumque aperiam,
+        deserunt dolores odio maiores numquam, tempore neque nam mollitia consequatur at, minima officiis ipsum quaerat
+        natus accusamus error reiciendis? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quis, repellendus!
+        Consequuntur eveniet dolore maiores, adipisci voluptatibus officiis perferendis illum. Nostrum quod ducimus eos
+        porro aut vero totam impedit voluptatum suscipit?</div>
+    <hr>
+</body>
+
+</html>
