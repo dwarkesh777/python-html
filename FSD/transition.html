@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>transition</title>
+    <style>
+        div {
+            width: 100px;
+            height: 100px;
+            background-color: #ff0000;
+            transition-property: all;
+            transition-duration: 2s;
+            transition-timing-function: ease;
+            /* transition-delay: 2s; */
+            /* border: 1px solid black; */
+        }
+
+        div:hover {
+
+            background-color: violet;
+            border-radius: 50%;
+            transform: rotate(360deg);
+            transform: skew(100);
+
+        }
+
+        input {
+            transition-property: all;
+
+            transition-duration: 5s;
+            transition-delay: 1s;
+            transition-timing-function: ease;
+
+
+        }
+
+        input.a {
+            background-color: aqua;
+        }
+
+        input.a:focus {
+            background-color: blue;
+        }
+
+        .b {
+            height: 50px;
+            width: 50px
+        }
+
+        input.b:focus {
+            height: 100px;
+            width: 100px;
+        }
+
+        input.c:hover {
+            color: blue;
+        }
+    </style>
+</head>
+
+<body>
+    <div></div>
+    <hr>
+    <form>
+        <input type="text" class="a" value="name" />name
+        <br>
+        <input type="password" class="b" style="background-color: aqua;" />pass
+        <br>
+        <input type="submit" class="c">
+
+    </form>
+</body>
+
+</html>
