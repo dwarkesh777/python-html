@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+
+    <form onsubmit="fun()" name="f1">
+        <input type="text" name="t1" required>
+        <input type="password" name="t2" required>
+        <input type="submit">
+    </form>
+
+    <script>
+        function fun() {
+            // name = document.forms["f1"]["t1"].value
+            let name = document.f1.t1.value
+            let pass = document.f1.t2.value.length
+            let pet = /[0-9]{10}/
+            // let   pet = /[abc]/
+            // let   pet = /[^abc]/
+            // let   pet = /[0-9]/
+            // let   pet = /[x|y]/
+            // let   pet = /^A/
+            // let   pet = /t$/
+            // let   pet = /bo*/
+            // let   pet = /\w/
+            // let   pet = /\W/
+            // let   pet = /\d/ write a javascript to validate username and password 1)passwordlength must be 6 to 12 username not strat with _ 
+            // let   pet = /\D/
+            // let   pet = /[a-z]|[A-Z]|[0-9]|\W/
+
+
+            if (pet.test(name)) {
+                alert("perfect " + name)
+            } else {
+                alert("not perfect ")
+            }
+
+            if (pass<=12 & pass>=6){
+                alert("perfect")
+            }else{
+                alert("not perfect ")
+            }
+        }
+    </script>
+</body>
+
+</html>
