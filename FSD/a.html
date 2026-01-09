@@ -78,7 +78,27 @@
             }
         </script>
     </form>
+
+<script>
+        let order =new Promise((resolve,reject)=>{
+            let success=true;
+            setTimeout(()=>{
+                if(success){
+                    resolve("Order placed successfully!");
+                }else{
+                    reject("Order failed!");
+                }
+            },2000);
+        });
+        order.then(result=> console.log(result));
+        order.catch(error=> console.log(error));
+        order.finally(()=> console.log("Order process completed."));
+    </script>
+
+
+    
 </body>
 
 
 </html>
+
