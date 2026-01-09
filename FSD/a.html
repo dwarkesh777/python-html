@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <input type="text" id="demo">
+    <button onclick="myFunction()">Save</button>
+    <script>
+        function myFunction() {
+            let x = document.getElementById("demo").value;
+            localStorage.setItem("name", x);
+            sessionStorage.setItem("name", x);
+            alert("Saved");
+        }
+    </script>
+    <button onclick="show()">Show</button>
+    <script>
+        function show() {
+            let name = localStorage.getItem("name");
+            let name1 = sessionStorage.getItem("name");
+
+            document.getElementById("op").innerHTML = "Local Storage: " + name + "<br>Session Storage: " + name1;
+        }       
+    </script>
+    <button onclick="clr()">Clear</button>
+    <script>
+        function clr() {
+            localStorage.removeItem("name");
+            sessionStorage.removeItem("name");
+            document.getElementById("op").innerHTML = "Cleared Local Storage";
+        }
+    </script>
+    <p id="op"></p>
+</body>
+
+</html>
