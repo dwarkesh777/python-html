@@ -119,9 +119,35 @@
         }
         displayData();
     </script>
+
+
+
+        <!-- Write a function that returns a Promise which resolves a number after 1 second.
+Use a loop with async/await to get values from 1 to 3.
+Print the doubled result of each value. -->
+
+    <script>
+        function returnNumber(num) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve(num);
+                }, 1000);
+            });
+        }
+
+        async function processNumbers() {
+            for (let i = 1; i <= 3; i++) {
+                let number = await returnNumber(i);
+                console.log(number * 2);
+            }
+        }
+
+        processNumbers();
+    </script>
 </body>
 
 
 </html>
+
 
 
