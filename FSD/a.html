@@ -158,10 +158,49 @@ Print the doubled result of each value. -->
              .catch(error => console.error('Error fetching joke:', error));
         }
     </script>
+
+        <!-- make a form with first name,last name , gender ,dropdown of game and a submit button after show all detail in alert box -->
+    <form>
+        First Name: <input type="text" id="firstName"><br>
+        Last Name: <input type="text" id="lastName"><br>
+        Gender:
+        <input type="radio" name="gender" value="Male">
+        Male
+        <input type="radio" name="gender" value="Female">
+        Female<br>
+        Game:
+        <select id="game">
+            <option value="Football">Football</option>
+            <option value="Basketball">Basketball</option>
+            <option value="Tennis">Tennis</option> 
+        </select><br>
+        <button type="button" onclick="showDetails()">Submit</button>
+        <script>
+            function showDetails() {
+                let firstName = document.getElementById("firstName").value;
+                let lastName = document.getElementById("lastName").value;
+                let genderElements = document.getElementsByName("gender");
+
+                let gender = "";
+                for (let i = 0; i < genderElements.length; i++) {
+                    if (genderElements[i].checked) {
+
+
+                        gender = genderElements[i].value;
+                    }
+
+                }
+                let game = document.getElementById("game").value;
+                alert("First Name: " + firstName + "\nLast Name: " + lastName + "\nGender: " + gender + "\nGame: " + game);
+            }
+        </script>
+    </form>
+
 </body>
 
 
 </html>
+
 
 
 
