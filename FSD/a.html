@@ -225,10 +225,51 @@ request. -->
             }
         }
     </script>
+
+
+<!-- 4 digit otp box  do not start with 0 and only number allow 
+CREATE TWO BUTTON 1.VERIFY 
+2.SHOW OTP when click verify store in local storage for 10 sec if user click on show button it should display on same page if user hover it should get yellow background. -->
+
+
+    OTP: <input type="text" id="otp" maxlength="4" oninput="validateOTP()">
+    <button type="button" onclick="verifyOTP()">Verify</button>
+    <button type="button" onmouseover="showOTP()" onmouseout="hideOTP()">Show OTP</button>
+    <p id="displayOtp"></p>
+    <script>
+        function validateOTP(){
+            let otpInput = document.getElementById("otp");
+            otpInput.value = otpInput.value.replace(/[^1-9]/);
+        }
+        function verifyOTP(){
+            let otp = document.getElementById("otp").value;
+            if(otp.length === 4){
+                localStorage.setItem("otp", otp);
+                setTimeout(() => {
+                    localStorage.removeItem("otp");
+                }, 10000); // Remove OTP after 10 seconds
+                alert("OTP Verified and stored for 10 seconds.");
+            } else {
+                alert("Please enter a valid 4-digit OTP (not starting with 0).");
+            }
+        }
+        function showOTP(){
+            let storedOtp = localStorage.getItem("otp");
+            if(storedOtp){
+                let displayElement = document.getElementById("displayOtp");
+                displayElement.innerText = storedOtp;
+                displayElement.style.backgroundColor = "yellow";
+            } else {
+                alert("No OTP found or it has expired.");
+            }
+        }
+    </script>
+    
 </body>
 
 
 </html>
+
 
 
 
